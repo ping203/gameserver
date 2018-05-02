@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package emsg;
+
+// 基础错误
+enum SystemErr {
+    SE_Succeed = 0; //成功
+    SE_Service = 1; //服务异常
+    SE_NotEnoughParams = 2; //缺少必要参数
+    SE_InvalidParams = 3; //参数值不对
+}
+
+// 登录流程错误
+enum LoginErr {
+    LE_Succeed = 0; //成功
+    LE_DB = 1001; //数据库错误
+    LE_AuthTimeout = 1002; //认证超时
+    LE_Authenticated = 1003; //重复认证
+    LE_Authenticating = 1004; //认证中
+    LE_UnAuthenticated = 1005; //未认证
+    LE_LoginTimeout = 1006; //登录超时
+    LE_Logining = 1007; //登录中
+    LE_ReLogined = 1008; //重复登录
+    LE_LoginProtected = 1009; //登录保护
+    LE_CheckSign = 1010; //签名校验错误
+    LE_AccountIsLocked = 1011; //账号被锁定
+    LE_AccountIsBanned = 1012; //账号被封禁
+    LE_UserNotFound = 1013; //用户不存在
+    LE_SaveUserBriefData = 1014; //保存用户概要信息错误
+    LE_SyncUserBriefData = 1015; //同步用户概要信息错误
+    LE_SessionNotFound = 1016;  // 用户session不存在
+}
+
+// 业务逻辑错误
+enum BizErr {
+
+}

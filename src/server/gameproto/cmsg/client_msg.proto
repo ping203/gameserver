@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+// C_Req 开头是 Client -> Server
+// C_Resp 开头是 Server -> Client
+// C_Notify 开头是 Server -> Client
+
+package cmsg;
+
+import "gamedef/game_def.proto";
+
+// 同步系统时间
+message CReqSyncSystemTime {
+    int64 timestamp = 1; //客户端请求时间
+}
+
+message CRespSyncSystemTime {
+    int64 timestamp = 1; //客户端请求时间
+    int64 serverTimestamp = 2; //服务端时间
+}
+
+// 玩家认证请求
+message CReqAuth {
+    string account = 1; //账号
+    string password = 2; //密码
+    gamedef.ExtraAccountInfo extra = 3; //账号额外信息
+}
+
+message CRespAuth {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    string account = 3;
+    uint64 userID = 4;
+    string sign = 5; // 随机校验码
+    int64 unlockTime = 6; // 解封时间
+}
+
+// 玩家登录请求
+message CReqLogin {
+    uint64 userID = 1; //登录账号ID
+    string sign = 2; //校验码
+}
+
+message CRespLogin {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint64 userID = 3;
+    gamedef.User user = 4;
+    bool isReconnect = 5; //是否断线重连
+}
+
+// 玩家登出请求
+message CReqLogout {
+}
+
+message CRespLogout {
+    uint32 errCode = 1;
+    string errMsg = 2;
+}
+
+// 玩家被提出
+message CNotifyLogout {
+    gamedef.LoginInfo loginInfo = 1; //用户登录信息
+}
+
+// 玩家登录状态请求
+message CReqUserLoginState {
+    uint64 userID = 1; //登录账号ID
+    string sign = 2; //校验码
+}
+
+message CRespUserLoginState {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint64 userID = 3; //登录账号ID
+    bool isLogin = 4; //是否已经登录
+    gamedef.LoginInfo loginInfo = 5; //用户登录信息
+}
+
+// 请求玩家数据
+message CReqNotifyUserData {
+}
+
+// 返回玩家数据
+message CRespNotifyUserData {
+    uint32 errCode = 1;
+    string errMsg = 2;
+}
