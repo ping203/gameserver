@@ -1,0 +1,109 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "CjHi1eSZSG4tGIwrngR9o3V8cL4=",
+			"path": "github.com/gogo/protobuf/proto",
+			"revision": "d5bc08a2c4c572e9bcff820aa125fe38ac3a3a42",
+			"revisionTime": "2018-02-23T15:10:32Z"
+		},
+		{
+			"checksumSHA1": "05ncuUbVZQ2YO0x/assQdkGyGlE=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "6e4cc92cc905d5f4a73041c1b8228ea08f4c6147",
+			"revisionTime": "2017-05-31T02:26:34Z"
+		},
+		{
+			"checksumSHA1": "86mAMNPlpPyrgBPjUCeI33tPoBA=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "d965e9adc66deebadcc7d0c6c7598e2a4baa7838",
+			"revisionTime": "2017-12-28T15:29:59Z"
+		},
+		{
+			"checksumSHA1": "8flcrE+NuGsWvdeoiTK+uyjY4CE=",
+			"path": "github.com/name5566/leaf",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "y6E0ovsIXVw7Zod1/fbz9wZV/n4=",
+			"path": "github.com/name5566/leaf/chanrpc",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "sowt7ZfJrH+Wf+rfTflhm1Tca9s=",
+			"path": "github.com/name5566/leaf/cluster",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "As7QD82xhjAwg4791Wg0pY7r0L4=",
+			"path": "github.com/name5566/leaf/conf",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "3DGP02mA3oHKzWZwbX+O2E2awuI=",
+			"path": "github.com/name5566/leaf/console",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "znlgUR3tapJ6zUTmPsZ4EPCI4ss=",
+			"path": "github.com/name5566/leaf/gate",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "ECx6CC5rqOL89b9Slzph0cTwpVY=",
+			"path": "github.com/name5566/leaf/go",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "hDDoUmN8rbcixW2MYmRuN/HDffk=",
+			"path": "github.com/name5566/leaf/log",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "u5iaNOTVoIbuXk/9qHmBfehnO/0=",
+			"path": "github.com/name5566/leaf/module",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "r0ly5y8EBQpiTyjtSVT4LItjjAU=",
+			"path": "github.com/name5566/leaf/network",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "H5JVWy5iMxiheMApQX9Uc9Ohq5E=",
+			"path": "github.com/name5566/leaf/network/protobuf",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "styQgQMqItaB8sFEst9CAvuvLas=",
+			"path": "github.com/name5566/leaf/recordfile",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "ldrELMgmEp92+sMLAxjdAPOygh4=",
+			"path": "github.com/name5566/leaf/timer",
+			"revision": "09f6b6dfd7a6e71accdd2373702db85964d35d65",
+			"revisionTime": "2017-10-10T10:00:04Z"
+		},
+		{
+			"checksumSHA1": "wezQdP165tX6G3PxZ9KVvngoNIo=",
+			"path": "github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef",
+			"revision": "33dc5e0937f12d0fa273dd1abe986e9a6e47a0db",
+			"revisionTime": "2018-05-02T11:53:56Z"
+		}
+	],
+	"rootPath": "server"
+}

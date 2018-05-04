@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package gamedef;
+
+// 用户登录信息
+message LoginInfo {
+    string ip = 1; //ip地址
+    string region = 2; //地区
+}
+
+// 账号额外信息
+message ExtraAccountInfo {
+    uint32 accountType = 1; // 账号类型
+    uint32 channel = 2; //渠道号
+    uint32 platform = 3; //平台号
+}
+
+// 用户信息
+message User {
+    uint64 userID = 1; //玩家ID
+    string nickname = 2; //昵称
+    uint32 sexID = 3; //性别
+}
+
+
