@@ -3,14 +3,11 @@ package internal
 import (
 	"reflect"
 
+	"server/gameproto/cmsg"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/gate"
 )
-
-func init() {
-}
-
-type messageHandler func(proto.Message, gate.Agent)
 
 func handler(h interface{}) {
 	v := reflect.ValueOf(h)
@@ -28,4 +25,17 @@ func handler(h interface{}) {
 		v.Call([]reflect.Value{reflect.ValueOf(m), reflect.ValueOf(a)})
 	}
 	skeleton.RegisterChanRPC(reflect.TypeOf(msg), f)
+}
+
+func init() {
+	handler(onReqAuth)
+}
+
+func onReqAuth(msg *cmsg.CReqAuth, agent gate.Agent) {
+	accountModel.CheckAccountAsync(msg.Account, msg.Password, agent)
+}
+
+func onReqLogin(msg *cmsg.CReqLogin, agent gate.Agent) {
+	resp := &cmsg.CRespLogin{}
+	agent.WriteMsg(resp)
 }

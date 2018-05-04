@@ -8,6 +8,11 @@ message LoginInfo {
     string region = 2; //地区
 }
 
+message Account {
+    string Account = 1;
+    uint64 userID = 2; //玩家ID
+}
+
 // 账号额外信息
 message ExtraAccountInfo {
     uint32 accountType = 1; // 账号类型
@@ -22,4 +27,39 @@ message User {
     uint32 sexID = 3; //性别
 }
 
+// 背包
+message Package {
+   repeated Item items = 1; // 包裹道具
+   repeated General general = 2; // 身上的武将
+   repeated uint32 fight = 3; // 出战武将
+}
 
+// 道具
+message Item {
+    uint32 itemID = 1; // 道具ID
+    uint32 num = 2; // 数量
+}
+
+// 武将
+message General {
+    string name = 1; // 名字
+    uint32 itemID = 2; // 武将ID
+    uint32 individualHp = 3; // 血量个体
+    uint32 individualAtk = 4; // 攻击个体
+    uint32 individualDef = 5; // 防御个体
+    uint32 individualSp = 6; // 特攻个体
+    uint32 individualSpd = 7; // 特防个体
+    uint32 individualSd = 8; // 速度个体
+    uint32 striveHp = 9; // 血量努力值
+    uint32 striveAtk = 10; // 攻击努力值
+    uint32 striveDef = 11; // 防御努力值
+    uint32 striveSp = 12; // 特攻努力值
+    uint32 striveSpd = 13; // 特防努力值
+    uint32 striveSd = 14; // 速度努力值
+    uint32 level = 15; // 等级
+    repeated Skill skills = 16; // 技能
+}
+
+message Skill {
+    uint32 skillID = 1;
+}

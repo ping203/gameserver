@@ -1,15 +1,24 @@
 package gate
 
 import (
-	"github.com/wenxiu2199/gameserver/src/server/msg"
-	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"fmt"
+
+	"server/gameproto/cmsg"
+	"server/login"
+	"server/msg"
 )
 
 // 初始化路由
 func init() {
 	bindClientMessage()
+	sendClientMessage()
 }
 
 func bindClientMessage() {
-	msg.Router(&cmsg.CReqAuth{},)
+	msg.Router(&cmsg.CReqAuth{}, login.ChanRPC)
+	fmt.Println(&cmsg.CReqAuth{})
+}
+
+func sendClientMessage() {
+	msg.Processor.Register(&cmsg.CRespAuth{})
 }

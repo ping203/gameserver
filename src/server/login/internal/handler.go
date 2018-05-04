@@ -1,13 +1,27 @@
 package internal
 
 import (
-	"reflect"
+	"server/gameproto/cmsg"
+
+	"github.com/name5566/leaf/gate"
 )
 
-func handleMsg(m interface{}, h interface{}) {
-	skeleton.RegisterChanRPC(reflect.TypeOf(m), h)
+func init() {
+	skeleton.RegisterChanRPC("checkAccount", checkAccount)
 }
 
-func init() {
+func checkAccount(args []interface{}) {
+	resp := &cmsg.CRespAuth{}
+	agent := args[1].(gate.Agent)
+	if args[0] != nil {
+		err := args[0].(error)
+		if err != nil {
+			resp.ErrCode = 1
+			agent.WriteMsg(resp)
+			return
+		}
+	}
 
+	sessionMgr.
+		agent.WriteMsg(resp)
 }

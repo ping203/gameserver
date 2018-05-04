@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package cmsg;
 
-import "gamedef/game_def.proto";
+import "github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef/game_def.proto";
 
 // 同步系统时间
 message CReqSyncSystemTime {
