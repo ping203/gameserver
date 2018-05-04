@@ -11,10 +11,10 @@ func init() {
 
 func rpcNewAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	_ = a
+	sessionMgr.addSession(a)
 }
 
 func rpcCloseAgent(args []interface{}) {
 	a := args[0].(gate.Agent)
-	_ = a
+	sessionMgr.removeSession(a)
 }

@@ -18,7 +18,7 @@ const (
 )
 
 type session struct {
-	agent   *gate.Agent
+	agent   gate.Agent
 	userID  uint64
 	account string
 	state   loginState
