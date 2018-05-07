@@ -4,7 +4,6 @@ import (
 	"server/login/internal/model"
 )
 
-var sessionMgr *sessionManager
 var accountModel *model.AccountModel
 
 type db struct {

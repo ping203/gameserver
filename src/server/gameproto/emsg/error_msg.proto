@@ -33,5 +33,5 @@ enum LoginErr {
 
 // 业务逻辑错误
 enum BizErr {
-
+    BE_Succeed = 0; //成功
 }

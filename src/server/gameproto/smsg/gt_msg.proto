@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+// C_Req 开头是 Client -> Server
+// C_Resp 开头是 Server -> Client
+// C_Notify 开头是 Server -> Client
+
+package smsg;
+
+import "github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef/game_def.proto";
+
+message GtLsReqAuth{
+    string account = 1; //账号
+    string password = 2; //密码
+}
+
+message GtLsRespAuth{
+    uint32 errCode = 1;
+    string errMsg = 2;
+    string account = 3;
+    uint64 userID = 4;
+    string sign = 5; // 随机校验码
+    int64 unlockTime = 6; // 解封时间
+}
+
+message GtGsReqLogin{
+    uint64 userID = 1; //登录账号ID
+}
+
+message GtGsRespLogin{
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint64 userID = 3;
+    gamedef.User user = 4;
+    bool isReconnect = 5; //是否断线重连
+}

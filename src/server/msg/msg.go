@@ -1,8 +1,6 @@
 package msg
 
 import (
-	"fmt"
-
 	"server/protobuf"
 
 	"github.com/golang/protobuf/proto"
@@ -17,6 +15,5 @@ func init() {
 // Router 注册和路由
 func Router(msg proto.Message, msgRouter *chanrpc.Server) {
 	Processor.Register(msg)
-	fmt.Println(msg.String())
 	Processor.SetRouter(msg, msgRouter)
 }

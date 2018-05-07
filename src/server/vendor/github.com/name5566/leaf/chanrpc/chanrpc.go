@@ -3,9 +3,12 @@ package chanrpc
 import (
 	"errors"
 	"fmt"
+	"reflect"
+	"runtime"
+
+	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/conf"
 	"github.com/name5566/leaf/log"
-	"runtime"
 )
 
 // one server per goroutine (goroutine not safe)
@@ -61,6 +64,10 @@ func assert(i interface{}) []interface{} {
 	} else {
 		return i.([]interface{})
 	}
+}
+
+func (s *Server) logs(str string, args ...interface{}) {
+	log.Debug(str, args...)
 }
 
 // you must call the function before calling Open and Go
@@ -131,6 +138,26 @@ func (s *Server) Exec(ci *CallInfo) {
 	err := s.exec(ci)
 	if err != nil {
 		log.Error("%v", err)
+	}
+}
+
+// goroutine safe
+func (s *Server) GoProto(args ...interface{}) {
+	msg := args[0].(proto.Message)
+	id := reflect.TypeOf(msg)
+	s.logs("msg %v", msg)
+
+	f := s.functions[id]
+	if f == nil {
+		return
+	}
+
+	defer func() {
+		recover()
+	}()
+	s.ChanCall <- &CallInfo{
+		f:    f,
+		args: args,
 	}
 }
 

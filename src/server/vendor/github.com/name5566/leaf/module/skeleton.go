@@ -1,11 +1,15 @@
 package module
 
 import (
+	"reflect"
+	"time"
+
+	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/console"
+	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/go"
 	"github.com/name5566/leaf/timer"
-	"time"
 )
 
 type Skeleton struct {
@@ -112,6 +116,36 @@ func (s *Skeleton) RegisterChanRPC(id interface{}, f interface{}) {
 	if s.ChanRPCServer == nil {
 		panic("invalid ChanRPCServer")
 	}
+
+	s.server.Register(id, f)
+}
+
+func (s *Skeleton) RegisterHandler(h interface{}) {
+	v := reflect.ValueOf(h)
+
+	if v.Type().NumIn() != 2 {
+		panic("handler params num wrong")
+	}
+	msg := reflect.New(v.Type().In(0)).Elem().Interface().(proto.Message)
+	f := func(args []interface{}) {
+		// 收到的 消息
+		m := args[0].(proto.Message)
+		// 消息的发送者
+		a := args[1].(gate.Agent)
+		// 调用
+		v.Call([]reflect.Value{reflect.ValueOf(m), reflect.ValueOf(a)})
+	}
+	s.RegisterChanRPC(reflect.TypeOf(msg), f)
+}
+
+type protoHandler func(proto.Message, gate.Agent)
+
+func (s *Skeleton) RegisterProtoChanRPC(msg proto.Message, f protoHandler) {
+	if s.ChanRPCServer == nil {
+		panic("invalid ChanRPCServer")
+	}
+
+	id := reflect.TypeOf(msg)
 
 	s.server.Register(id, f)
 }

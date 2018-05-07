@@ -1,10 +1,7 @@
 package gate
 
 import (
-	"fmt"
-
 	"server/gameproto/cmsg"
-	"server/login"
 	"server/msg"
 )
 
@@ -15,8 +12,7 @@ func init() {
 }
 
 func bindClientMessage() {
-	msg.Router(&cmsg.CReqAuth{}, login.ChanRPC)
-	fmt.Println(&cmsg.CReqAuth{})
+	msg.Router(&cmsg.CReqAuth{}, ChanRPC)
 }
 
 func sendClientMessage() {

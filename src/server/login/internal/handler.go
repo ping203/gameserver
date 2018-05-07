@@ -22,6 +22,4 @@ func checkAccount(args []interface{}) {
 		}
 	}
 
-	sessionMgr.
-		agent.WriteMsg(resp)
 }
