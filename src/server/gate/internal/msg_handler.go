@@ -11,7 +11,7 @@ func init() {
 	skeleton.RegisterHandler(onReqAuth)
 }
 
-func onReqAuth(msg *cmsg.CReqAuth, agent gate.Agent) {
+func onReqAuth(req *cmsg.CReqAuth, agent gate.Agent) {
 	resp := &cmsg.CRespAuth{}
 	session, exist := sessionMgr.getSessionByAgent(agent)
 	if !exist {
@@ -28,17 +28,31 @@ func onReqAuth(msg *cmsg.CReqAuth, agent gate.Agent) {
 
 	sessionMgr.addUserOnAuth(agent)
 	err := serverMgr.Send2Login(&smsg.GtLsReqAuth{
-		Account:  msg.Account,
-		Password: msg.Password,
+		Account:  req.Account,
+		Password: req.Password,
 	}, agent)
 	if err != nil {
 		resp.ErrCode = 100
 		agent.WriteMsg(resp)
 		return
 	}
+
 }
 
-func onReqLogin(msg *cmsg.CReqLogin, agent gate.Agent) {
+func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 	resp := &cmsg.CRespLogin{}
-	agent.WriteMsg(resp)
+	ses, exist := sessionMgr.getSessionByAgent(agent)
+	if !exist {
+		resp.ErrCode = 1
+		agent.WriteMsg(resp)
+		return
+	}
+
+	ok := ses.checkSign(req.Sign)
+	if !ok {
+		resp.ErrCode = 3
+		agent.WriteMsg(resp)
+		return
+	}
+
 }

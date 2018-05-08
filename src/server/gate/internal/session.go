@@ -93,3 +93,13 @@ func (p *session) createSign(userID uint64) string {
 	s := util.MD5(fmt.Sprintf("%d%d", userID, num))
 	return s
 }
+
+func (p *session) resetSign() {
+	p.sign = &sign{}
+}
+
+// 验签
+func (p *session) checkSign(sign string) bool {
+	defer p.resetSign()
+	return p.sign.token == sign
+}

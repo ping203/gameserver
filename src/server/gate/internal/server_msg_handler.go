@@ -63,4 +63,10 @@ func onGtLsRespAuth(req *smsg.GtLsRespAuth, agent gate.Agent) {
 	resp.Account = req.Account
 
 	agent.WriteMsg(resp)
+
+	_, exist = sessionMgr.getSessionByUserID(req.UserID)
+	if exist {
+		// 通知已经登录
+	}
+
 }
