@@ -6,7 +6,6 @@ syntax = "proto3";
 
 package smsg;
 
-import "github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef/game_def.proto";
 
 message GtLsReqAuth{
     string account = 1; //账号
@@ -22,14 +21,6 @@ message GtLsRespAuth{
     int64 unlockTime = 6; // 解封时间
 }
 
-message GtGsReqLogin{
-    uint64 userID = 1; //登录账号ID
-}
+message SSGtNotifyMessage{
 
-message GtGsRespLogin{
-    uint32 errCode = 1;
-    string errMsg = 2;
-    uint64 userID = 3;
-    gamedef.User user = 4;
-    bool isReconnect = 5; //是否断线重连
 }

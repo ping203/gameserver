@@ -1,8 +1,11 @@
 package internal
 
 import (
+	"fmt"
+	"math/rand"
 	"sync"
-	"time"
+
+	"sanguosha.com/games/sgs/framework/util"
 
 	"github.com/name5566/leaf/gate"
 )
@@ -18,16 +21,25 @@ const (
 	stateClosed   loginState = -1
 )
 
+type sign struct {
+	token  string
+	expire int64
+}
+
 type session struct {
 	agent   gate.Agent
 	userID  uint64
 	account string
 	state   loginState
+	sign    *sign
 
-	waitAuth *time.Timer
 	// 等待登录和关闭
 	wgLogin  sync.WaitGroup
 	wgLogout sync.WaitGroup
+}
+
+func (p *session) isAuthing() bool {
+	return p.state == stateAuthing
 }
 
 func (p *session) isAuthed() bool {
@@ -50,9 +62,6 @@ func (p *session) isClosed() bool {
 
 func (p *session) setClosed() {
 	p.state = stateClosed
-	if p.waitAuth != nil {
-		p.waitAuth.Stop()
-	}
 }
 
 func (p *session) addLogin() {
@@ -69,4 +78,18 @@ func (p *session) addLogout() {
 
 func (p *session) doneLogout() {
 	p.wgLogout.Done()
+}
+
+// 鉴权
+func (p *session) auth(userID uint64) string {
+	p.sign = &sign{}
+	p.sign.token = p.createSign(userID)
+	p.sign.expire = util.GetCurrentTimestamp() + 300
+	return p.sign.token
+}
+
+func (p *session) createSign(userID uint64) string {
+	num := rand.Int31n(100000)
+	s := util.MD5(fmt.Sprintf("%d%d", userID, num))
+	return s
 }

@@ -58,6 +58,7 @@ func (m *Module) Run(closeSig chan bool) {
 }
 
 func (m *Module) Close(closeSig chan bool) {
+	sessionMgr.close()
 	go func() {
 		select {
 		case <-closeSig:

@@ -1,13 +1,19 @@
 package internal
 
 import (
+	"time"
+
 	"github.com/name5566/leaf/gate"
+	"github.com/name5566/leaf/timer"
+	"sanguosha.com/games/sgs/framework/util"
 )
 
 type sessionManager struct {
 	agent2Session   map[gate.Agent]*session
 	userID2Session  map[uint64]*session
 	account2Session map[string]*session
+
+	timer *timer.Timer
 }
 
 func (p *sessionManager) init() {
@@ -16,10 +22,31 @@ func (p *sessionManager) init() {
 	p.account2Session = make(map[string]*session)
 }
 
+func (p *sessionManager) close() {
+	if p.timer != nil {
+		p.timer.Stop()
+	}
+}
+
 func (p *sessionManager) addSession(agent gate.Agent) {
 	s := &session{}
 	s.agent = agent
 	p.agent2Session[agent] = s
+}
+
+// 回收签名
+func (p *sessionManager) gc() {
+	var min = int64(^uint64(0) >> 1)
+	for _, v := range p.agent2Session {
+		if v.sign.expire > util.GetCurrentTimestamp() {
+			v.sign = &sign{}
+		} else {
+			if min <= v.sign.expire {
+				min = v.sign.expire
+			}
+		}
+	}
+	p.timer = skeleton.AfterFunc(time.Duration(min), p.gc)
 }
 
 func (p *sessionManager) removeSession(agent gate.Agent) {
@@ -41,6 +68,13 @@ func (p *sessionManager) removeSession(agent gate.Agent) {
 	}
 }
 
+func (p *sessionManager) getSessionByAgent(agent gate.Agent) (*session, bool) {
+	if s, ok := p.agent2Session[agent]; ok {
+		return s, true
+	}
+	return nil, false
+}
+
 func (p *sessionManager) getSessionByUserID(userID uint64) (*session, bool) {
 	if s, ok := p.userID2Session[userID]; ok {
 		return s, true
@@ -54,15 +88,14 @@ func (p *sessionManager) addUserOnAuth(agent gate.Agent) {
 	}
 }
 
-func (p *sessionManager) addUserOnAuthSuccess(agent gate.Agent, userID uint64, account string) {
+func (p *sessionManager) addUserOnAuthSuccess(agent gate.Agent, userID uint64, account string) string {
 	if s, ok := p.agent2Session[agent]; ok {
 		s.userID = userID
 		s.state = stateAuthed
 		s.account = account
-		if s.waitAuth != nil {
-			s.waitAuth.Stop()
-		}
+		return s.auth(userID)
 	}
+	return ""
 }
 
 func (p *sessionManager) addUserOnLogin(agent gate.Agent) {
