@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"sync"
 
-	"sanguosha.com/games/sgs/framework/util"
+	"server/util"
 
 	"github.com/name5566/leaf/gate"
 )

@@ -1,7 +1,18 @@
 package util
 
-import "time"
+import (
+	"crypto/md5"
+	"encoding/hex"
+	"time"
+)
 
-func GetCurrentTimeStamp() int64 {
+func GetCurrentTimestamp() int64 {
 	return time.Now().Unix()
+}
+
+func MD5(str string) string {
+	data := []byte(str)
+	hash := md5.New()
+	h := hash.Sum(data)
+	return hex.EncodeToString(h)
 }

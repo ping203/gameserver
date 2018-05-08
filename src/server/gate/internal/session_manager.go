@@ -3,9 +3,10 @@ package internal
 import (
 	"time"
 
+	"server/util"
+
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/timer"
-	"sanguosha.com/games/sgs/framework/util"
 )
 
 type sessionManager struct {

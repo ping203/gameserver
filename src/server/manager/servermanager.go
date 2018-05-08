@@ -1,8 +1,9 @@
 package manager
 
 import (
+	"errors"
+
 	"github.com/golang/protobuf/proto"
-	"github.com/juju/errors"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/gate"
 )
