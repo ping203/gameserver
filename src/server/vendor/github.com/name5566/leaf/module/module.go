@@ -1,15 +1,20 @@
 package module
 
 import (
-	"github.com/name5566/leaf/conf"
-	"github.com/name5566/leaf/log"
 	"runtime"
 	"sync"
+
+	"server/manager"
+
+	"github.com/name5566/leaf/chanrpc"
+	"github.com/name5566/leaf/conf"
+	"github.com/name5566/leaf/log"
 )
 
 type Module interface {
 	OnInit()
 	OnDestroy()
+	RegisterService(map[manager.ServerType]*chanrpc.Server)
 	Run(closeSig chan bool)
 }
 

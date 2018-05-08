@@ -1,12 +1,11 @@
 package model
 
 import (
-	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/module"
 )
 
 type dbs interface {
-	CheckAccount(string, string) error
+	CheckAccount(string, string) (uint64, error)
 }
 
 type token struct {
@@ -25,9 +24,9 @@ func (p *AccountModel) Init(dbs dbs, skeleton *module.Skeleton) {
 	// todo超时回收token
 }
 
-func (p *AccountModel) CheckAccountAsync(account string, psw string, agent gate.Agent) {
+func (p *AccountModel) CheckAccountAsync(account string, psw string, f func(uint64, error)) {
 	go func() {
-		err := p.dbs.CheckAccount(account, psw)
-		p.skeleton.ChanRPCServer.Go("checkAccount", err, agent)
+		userID, err := p.dbs.CheckAccount(account, psw)
+		f(userID, err)
 	}()
 }

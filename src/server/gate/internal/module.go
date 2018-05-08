@@ -1,6 +1,9 @@
 package internal
 
 import (
+	"server/manager"
+
+	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/gate"
 	"github.com/name5566/leaf/module"
 
@@ -40,6 +43,10 @@ func (m *Module) OnInit() {
 	for k := range m.closeSig {
 		m.closeSig[k] = make(chan bool)
 	}
+}
+
+func (m *Module) RegisterService(servers map[manager.ServerType]*chanrpc.Server) {
+	Init(servers)
 }
 
 func (m *Module) Run(closeSig chan bool) {

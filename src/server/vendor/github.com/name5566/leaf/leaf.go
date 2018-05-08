@@ -1,13 +1,17 @@
 package leaf
 
 import (
+	"server/manager"
+
+	"os"
+	"os/signal"
+
+	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/cluster"
 	"github.com/name5566/leaf/conf"
 	"github.com/name5566/leaf/console"
 	"github.com/name5566/leaf/log"
 	"github.com/name5566/leaf/module"
-	"os"
-	"os/signal"
 )
 
 func Run(mods ...module.Module) {
@@ -43,4 +47,10 @@ func Run(mods ...module.Module) {
 	console.Destroy()
 	cluster.Destroy()
 	module.Destroy()
+}
+
+func RegisterService(servers map[manager.ServerType]*chanrpc.Server, mods ...module.Module) {
+	for _, v := range mods {
+		v.RegisterService(servers)
+	}
 }

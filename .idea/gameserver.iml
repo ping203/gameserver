@@ -3,6 +3,7 @@
   <component name="Go" enabled="true" />
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$/src/server/vendor/github.com/name5566/leaf" />
     <content url="file://$MODULE_DIR$/src/server/vendor/github.com/name5566/leaf/chanrpc" />
     <content url="file://$MODULE_DIR$/src/server/vendor/github.com/name5566/leaf/module" />
     <orderEntry type="inheritedJdk" />

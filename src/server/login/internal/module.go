@@ -2,7 +2,9 @@ package internal
 
 import (
 	"server/base"
+	"server/manager"
 
+	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/module"
 )
 
@@ -21,4 +23,8 @@ func (m *Module) OnInit() {
 
 func (m *Module) OnDestroy() {
 
+}
+
+func (m *Module) RegisterService(servers map[manager.ServerType]*chanrpc.Server) {
+	Init(servers)
 }
