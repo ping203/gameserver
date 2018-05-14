@@ -49,6 +49,13 @@ func (p *session) isAuthed() bool {
 	return false
 }
 
+func (p *session) isLoging() bool {
+	if p.state >= stateLogining {
+		return true
+	}
+	return false
+}
+
 func (p *session) isLogined() bool {
 	if p.state >= stateLogined {
 		return true

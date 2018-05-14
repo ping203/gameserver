@@ -34,6 +34,12 @@ message CRespAuth {
     int64 unlockTime = 6; // 解封时间
 }
 
+// 账号登录通知
+message CNotifyLoginInfo {
+    string account = 1; //账号
+    string ip = 2; // 登录IP
+}
+
 // 玩家登录请求
 message CReqLogin {
     uint64 userID = 1; //登录账号ID
@@ -60,20 +66,6 @@ message CRespLogout {
 // 玩家被提出
 message CNotifyLogout {
     gamedef.LoginInfo loginInfo = 1; //用户登录信息
-}
-
-// 玩家登录状态请求
-message CReqUserLoginState {
-    uint64 userID = 1; //登录账号ID
-    string sign = 2; //校验码
-}
-
-message CRespUserLoginState {
-    uint32 errCode = 1;
-    string errMsg = 2;
-    uint64 userID = 3; //登录账号ID
-    bool isLogin = 4; //是否已经登录
-    gamedef.LoginInfo loginInfo = 5; //用户登录信息
 }
 
 // 请求玩家数据

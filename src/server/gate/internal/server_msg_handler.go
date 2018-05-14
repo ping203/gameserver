@@ -15,6 +15,7 @@ func init() {
 	skeleton.RegisterChanRPC("Send2Clients", onSend2Clients)
 	// 具体逻辑
 	skeleton.RegisterHandler(onGtLsRespAuth)
+	skeleton.RegisterHandler(onGtGsRespLogin)
 }
 
 // 参数1 消息, 参数2 目标用户群
@@ -62,11 +63,37 @@ func onGtLsRespAuth(req *smsg.GtLsRespAuth, agent gate.Agent) {
 	resp.UserID = req.UserID
 	resp.Account = req.Account
 
-	agent.WriteMsg(resp)
-
-	_, exist = sessionMgr.getSessionByUserID(req.UserID)
+	s, exist := sessionMgr.getSessionByUserID(req.UserID)
 	if exist {
 		// 通知已经登录
+		agent.WriteMsg(&cmsg.CNotifyLoginInfo{
+			Account: req.Account,
+			Ip:      s.agent.LocalAddr().String(),
+		})
 	}
 
+	agent.WriteMsg(resp)
+}
+
+func onGtGsRespLogin(req *smsg.GtGsRespLogin, agent gate.Agent) {
+	resp := &cmsg.CRespLogin{}
+	if req.ErrCode != 0 {
+		resp.ErrCode = req.ErrCode
+		resp.ErrMsg = req.ErrMsg
+		agent.WriteMsg(resp)
+		return
+	}
+
+	_, exist := sessionMgr.getSessionByAgent(agent)
+	if !exist {
+		logs.Debug("返回时, 用户已经断开连接")
+		return
+	}
+
+	sessionMgr.addUserOnLoginSuccess(agent)
+
+	resp.UserID = req.UserID
+	resp.User = req.User
+
+	agent.WriteMsg(resp)
 }

@@ -5,7 +5,7 @@ syntax = "proto3";
 // C_Notify 开头是 Server -> Client
 
 package smsg;
-
+import "github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef/game_def.proto";
 
 message GtLsReqAuth{
     string account = 1; //账号
@@ -21,6 +21,14 @@ message GtLsRespAuth{
     int64 unlockTime = 6; // 解封时间
 }
 
-message SSGtNotifyMessage{
+message GtGsReqLogin{
+    uint64 userID = 1;
+    gamedef.ExtraAccountInfo extra = 2;
+}
 
+message GtGsRespLogin{
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint64 userID = 3;
+    gamedef.User user = 4; // 用户数据
 }

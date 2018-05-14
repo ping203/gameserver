@@ -65,3 +65,23 @@ func (p *ServerManager) Send2Gate(msg proto.Message, agent gate.Agent) error {
 	s.GoProto(msg, agent)
 	return nil
 }
+
+//Send2Clients 发送到客户端群
+func (p *ServerManager) Send2Clients(msg proto.Message, userID []uint64) error {
+	s, exist := p.server[GateServer]
+	if !exist {
+		return ErrServer
+	}
+	s.Go("Send2Clients", msg, userID)
+	return nil
+}
+
+//Send2Clients 发送到单一客户端
+func (p *ServerManager) Send2Client(msg proto.Message, userID uint64) error {
+	s, exist := p.server[GateServer]
+	if !exist {
+		return ErrServer
+	}
+	s.Go("Send2Client", msg, userID)
+	return nil
+}

@@ -9,6 +9,7 @@ import (
 
 func init() {
 	skeleton.RegisterHandler(onReqAuth)
+	skeleton.RegisterHandler(onReqLogin)
 }
 
 func onReqAuth(req *cmsg.CReqAuth, agent gate.Agent) {
@@ -48,6 +49,12 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 		return
 	}
 
+	if ses.userID != req.UserID {
+		resp.ErrCode = 1
+		agent.WriteMsg(resp)
+		return
+	}
+
 	ok := ses.checkSign(req.Sign)
 	if !ok {
 		resp.ErrCode = 3
@@ -55,4 +62,16 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 		return
 	}
 
+	if ses.isLoging() {
+		resp.ErrCode = 3
+		agent.WriteMsg(resp)
+		return
+	}
+
+	sessionMgr.addUserOnLogin(agent)
+
+	// todo 超时回调
+	serverMgr.Send2Game(&smsg.GtGsReqLogin{
+		UserID: req.UserID,
+	}, agent)
 }
