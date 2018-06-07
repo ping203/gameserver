@@ -2,6 +2,7 @@ package internal
 
 import (
 	"server/gameproto/cmsg"
+	"server/gameproto/emsg"
 	"server/gameproto/smsg"
 
 	"github.com/name5566/leaf/gate"
@@ -16,27 +17,24 @@ func onReqAuth(req *cmsg.CReqAuth, agent gate.Agent) {
 	resp := &cmsg.CRespAuth{}
 	session, exist := sessionMgr.getSessionByAgent(agent)
 	if !exist {
-		resp.ErrCode = 1
+		resp.ErrCode = uint32(emsg.LoginErr_LE_UnAuthenticated)
+		resp.ErrMsg = emsg.LoginErr_LE_UnAuthenticated.String()
 		agent.WriteMsg(resp)
 		return
 	}
 
 	if session.isAuthing() {
-		resp.ErrCode = 2
+		resp.ErrCode = uint32(emsg.LoginErr_LE_Authenticating)
+		resp.ErrMsg = emsg.LoginErr_LE_Authenticating.String()
 		agent.WriteMsg(resp)
 		return
 	}
 
 	sessionMgr.addUserOnAuth(agent)
-	err := serverMgr.Send2Login(&smsg.GtLsReqAuth{
+	serverMgr.Send2Login(&smsg.GtLsReqAuth{
 		Account:  req.Account,
 		Password: req.Password,
 	}, agent)
-	if err != nil {
-		resp.ErrCode = 100
-		agent.WriteMsg(resp)
-		return
-	}
 
 }
 
@@ -70,8 +68,30 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 
 	sessionMgr.addUserOnLogin(agent)
 
-	// todo 超时回调
-	serverMgr.Send2Game(&smsg.GtGsReqLogin{
-		UserID: req.UserID,
-	}, agent)
+	// todo 超时回调.
+	requester.ReqTimeOut(func(seqID int64) error {
+		return serverMgr.Send2Game(&smsg.GtGsReqLogin{
+			SeqID:   seqID,
+			UserID:  req.UserID,
+			Account: ses.account,
+		}, agent)
+	}, func(data interface{}, err error) {
+		if err != nil {
+			resp.ErrCode = uint32(emsg.SystemErr_SE_Service)
+			resp.ErrMsg = emsg.SystemErr_SE_Service.String()
+			agent.WriteMsg(resp)
+			return
+
+		}
+		msg := data.(*smsg.GtGsRespLogin)
+		if msg.ErrCode != 0 {
+			resp.ErrMsg = msg.ErrMsg
+			resp.ErrCode = msg.ErrCode
+			agent.WriteMsg(resp)
+			return
+		}
+
+		resp.UserID = msg.UserID
+		resp.User = msg.User
+	}, requesterTimeOut)
 }

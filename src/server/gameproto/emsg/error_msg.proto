@@ -34,4 +34,5 @@ enum LoginErr {
 // 业务逻辑错误
 enum BizErr {
     BE_Succeed = 0; //成功
+    BE_LoadUserData  = 1; // 加载用户信息
 }

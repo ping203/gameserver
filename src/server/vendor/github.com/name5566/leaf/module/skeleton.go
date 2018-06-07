@@ -153,3 +153,7 @@ func (s *Skeleton) RegisterProtoChanRPC(msg proto.Message, f protoHandler) {
 func (s *Skeleton) RegisterCommand(name string, help string, f interface{}) {
 	console.Register(name, help, f, s.commandServer)
 }
+
+func (s *Skeleton) Post(f func()) {
+	s.server.Post(f)
+}

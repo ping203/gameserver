@@ -161,6 +161,12 @@ func (s *Server) GoProto(args ...interface{}) {
 	}
 }
 
+func (s *Server) Post(f func()) {
+	s.ChanCall <- &CallInfo{
+		f: f,
+	}
+}
+
 // goroutine safe
 func (s *Server) Go(id interface{}, args ...interface{}) {
 	f := s.functions[id]

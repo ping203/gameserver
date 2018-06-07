@@ -74,6 +74,7 @@ func (p *Processor) Register(msg proto.Message) uint16 {
 	id := p.StringHash(reflect.TypeOf(msg).String())
 	p.msgInfo[id] = i
 	p.msgID[msgType] = id
+
 	return id
 }
 

@@ -35,12 +35,8 @@ func onSend2Clients(args []interface{}) {
 // 参数1 消息, 参数2 用户
 func onSend2Client(args []interface{}) {
 	msg := args[0].(proto.Message)
-	userID := args[1].(uint64)
-	session, exist := sessionMgr.getSessionByUserID(userID)
-	if !exist {
-		return
-	}
-	session.agent.WriteMsg(msg)
+	agent := args[1].(gate.Agent)
+	agent.WriteMsg(msg)
 }
 
 func onGtLsRespAuth(req *smsg.GtLsRespAuth, agent gate.Agent) {

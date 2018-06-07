@@ -27,3 +27,7 @@ func Init(servers map[manager.ServerType]*chanrpc.Server) {
 	serverMgr = &manager.ServerManager{}
 	serverMgr.Init(servers)
 }
+
+func Post(f func()) {
+	skeleton.Post(f)
+}

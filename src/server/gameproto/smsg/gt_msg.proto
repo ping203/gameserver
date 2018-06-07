@@ -22,13 +22,17 @@ message GtLsRespAuth{
 }
 
 message GtGsReqLogin{
-    uint64 userID = 1;
-    gamedef.ExtraAccountInfo extra = 2;
+    int64 seqID = 1;
+    uint64 userID = 2;
+    string account = 3;
+    gamedef.ExtraAccountInfo extra = 4;
 }
 
 message GtGsRespLogin{
     uint32 errCode = 1;
     string errMsg = 2;
-    uint64 userID = 3;
-    gamedef.User user = 4; // 用户数据
+    int64 seqID = 3;
+    uint64 userID = 4;
+    string account = 5;
+    gamedef.User user = 6; // 用户数据
 }
