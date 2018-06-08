@@ -43,6 +43,7 @@ func (p *ServerManager) Send2Game(msg proto.Message, agent gate.Agent) error {
 		return ErrServer
 	}
 	s.GoProto(msg, agent)
+
 	return nil
 }
 

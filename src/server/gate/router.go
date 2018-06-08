@@ -13,8 +13,10 @@ func init() {
 
 func bindClientMessage() {
 	msg.Router(&cmsg.CReqAuth{}, ChanRPC)
+	msg.Router(&cmsg.CReqLogin{}, ChanRPC)
 }
 
 func sendClientMessage() {
 	msg.Processor.Register(&cmsg.CRespAuth{})
+	msg.Processor.Register(&cmsg.CRespLogin{})
 }

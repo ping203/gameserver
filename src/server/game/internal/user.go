@@ -32,6 +32,10 @@ func (p *user) GetAccount() string {
 	return p.account
 }
 
-func (p *user) send2Msg(message proto.Message) {
+func (p *user) sendMsg(message proto.Message) {
 	serverMgr.SendMsg("Send2Client", message, p.Agent)
+}
+
+func (p *user) send2Gate(message proto.Message) {
+	serverMgr.Send2Gate(message, p.Agent)
 }

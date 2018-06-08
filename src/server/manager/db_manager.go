@@ -35,7 +35,7 @@ func (s *DbManager) Close() {
 }
 
 func (s *DbManager) LoadUserAsync(userID uint64, cbk func(*gamedef.User, error)) {
-	s.worker.Post(func() {
+	s.worker.Post(func([]interface{}) {
 		// todo 加载数据
 		cbk(&gamedef.User{}, nil)
 	})

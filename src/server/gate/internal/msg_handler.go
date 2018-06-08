@@ -4,6 +4,7 @@ import (
 	"server/gameproto/cmsg"
 	"server/gameproto/emsg"
 	"server/gameproto/smsg"
+	"server/logs"
 
 	"github.com/name5566/leaf/gate"
 )
@@ -48,7 +49,7 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 	}
 
 	if ses.userID != req.UserID {
-		resp.ErrCode = 1
+		resp.ErrCode = 2
 		agent.WriteMsg(resp)
 		return
 	}
@@ -72,7 +73,7 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 	requester.ReqTimeOut(func(seqID int64) error {
 		return serverMgr.Send2Game(&smsg.GtGsReqLogin{
 			SeqID:   seqID,
-			UserID:  req.UserID,
+			UserID:  ses.userID,
 			Account: ses.account,
 		}, agent)
 	}, func(data interface{}, err error) {
@@ -81,7 +82,6 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 			resp.ErrMsg = emsg.SystemErr_SE_Service.String()
 			agent.WriteMsg(resp)
 			return
-
 		}
 		msg := data.(*smsg.GtGsRespLogin)
 		if msg.ErrCode != 0 {
@@ -90,8 +90,16 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 			agent.WriteMsg(resp)
 			return
 		}
+		_, exist := sessionMgr.getSessionByAgent(agent)
+		if !exist {
+			logs.Debug("返回时, 用户已经断开连接")
+			return
+		}
 
+		sessionMgr.addUserOnLoginSuccess(agent)
 		resp.UserID = msg.UserID
 		resp.User = msg.User
+
+		agent.WriteMsg(resp)
 	}, requesterTimeOut)
 }

@@ -145,7 +145,7 @@ func (s *Server) Exec(ci *CallInfo) {
 func (s *Server) GoProto(args ...interface{}) {
 	msg := args[0].(proto.Message)
 	id := reflect.TypeOf(msg)
-	s.logs("msg %v", msg)
+	s.logs("msg %v: %v", id, msg)
 
 	f := s.functions[id]
 	if f == nil {
@@ -161,7 +161,7 @@ func (s *Server) GoProto(args ...interface{}) {
 	}
 }
 
-func (s *Server) Post(f func()) {
+func (s *Server) Post(f func([]interface{})) {
 	s.ChanCall <- &CallInfo{
 		f: f,
 	}

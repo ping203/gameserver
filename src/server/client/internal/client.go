@@ -89,8 +89,9 @@ func (p *Client) read() ([]byte, error) {
 	bufMsgLen := b[:p.lenMsgLen]
 
 	// read len
-	if _, err := io.ReadFull(p.conn, bufMsgLen); err != nil {
-		panic("read err")
+	_, err := io.ReadFull(p.conn, bufMsgLen)
+	if err != nil {
+		return nil, err
 	}
 
 	// parse len
@@ -131,8 +132,11 @@ func (p *Client) read() ([]byte, error) {
 func (p *Client) readLoop() {
 	for {
 		data, err := p.read()
+		if err == io.EOF {
+			return
+		}
 		if err != nil {
-			panic(err.Error())
+			panic("read err")
 		}
 		msgRaw, err := p.processor.Unmarshal(data)
 		if err != nil {

@@ -138,6 +138,22 @@ func (s *Skeleton) RegisterHandler(h interface{}) {
 	s.RegisterChanRPC(reflect.TypeOf(msg), f)
 }
 
+func (s *Skeleton) RegisterHandlerClient(h interface{}) {
+	v := reflect.ValueOf(h)
+
+	if v.Type().NumIn() != 1 {
+		panic("handler params num wrong")
+	}
+	msg := reflect.New(v.Type().In(0)).Elem().Interface().(proto.Message)
+	f := func(args []interface{}) {
+		// 收到的 消息
+		m := args[0].(proto.Message)
+		// 调用
+		v.Call([]reflect.Value{reflect.ValueOf(m)})
+	}
+	s.RegisterChanRPC(reflect.TypeOf(msg), f)
+}
+
 type protoHandler func(proto.Message, gate.Agent)
 
 func (s *Skeleton) RegisterProtoChanRPC(msg proto.Message, f protoHandler) {
@@ -155,5 +171,8 @@ func (s *Skeleton) RegisterCommand(name string, help string, f interface{}) {
 }
 
 func (s *Skeleton) Post(f func()) {
-	s.server.Post(f)
+	post := func([]interface{}) {
+		f()
+	}
+	s.server.Post(post)
 }
