@@ -1,6 +1,8 @@
 package manager
 
 import (
+	"server/manager/mongodb"
+
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
@@ -8,12 +10,16 @@ import (
 type DbManager struct {
 	worker *chanrpc.Server
 	close  chan bool
+
+	*mongodb.MgoClient
 }
 
 func (s *DbManager) Init() {
 	s.worker = chanrpc.NewServer(10000)
 	s.close = make(chan bool)
 	s.Run(s.close)
+
+	s.MgoClient = &mongodb.MgoClient{}
 }
 
 func (s *DbManager) Run(closeSig chan bool) {

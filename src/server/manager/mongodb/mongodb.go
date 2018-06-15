@@ -1,36 +1,43 @@
 package mongodb
 
 import (
-	"mgo"
+	"server/gameproto/gamedef"
+	"server/logs"
 
-	"github.com/astaxie/beego/logs"
+	"gopkg.in/mgo.v2-unstable"
 )
 
-var (
-	DBMgr      = new(DBManager)
-	mgoSession *mgo.Session
-	dataBase   = "game1"
-	url        = "127.0.0.1:27017"
-)
-
-type DBManager struct {
+type MgoClient struct {
 	*mgo.Session
+	dataBase string
 }
 
-func init() {
+type ModelUser struct {
+	ID   uint64 `bson:"_id"`
+	User *gamedef.User
+}
+
+// Init 初始化
+func (m *MgoClient) Init(url string, dataBase string) {
 	session, err := mgo.Dial(url)
 	if err != nil {
 		panic("dial mongodb err")
 	}
-	DBMgr.Session = session
+	m.Session = session
+	m.dataBase = dataBase
+}
+
+// Close 关闭连接
+func (m *MgoClient) Close() {
+	m.Session.Close()
 }
 
 // Find... 查找一条数据
-func (m *DBManager) Find(table string, id string, result interface{}) (interface{}, error) {
+func (m *MgoClient) Find(table string, id interface{}, result interface{}) (interface{}, error) {
 	session := m.Session.Clone()
 	defer session.Close()
 
-	collection := session.DB(dataBase).C(table)
+	collection := session.DB(m.dataBase).C(table)
 	err := collection.FindId(id).One(result)
 
 	if err != nil {
@@ -41,22 +48,22 @@ func (m *DBManager) Find(table string, id string, result interface{}) (interface
 }
 
 // Insert... 插入一条数据
-func (m *DBManager) Insert(table string, id string, msg interface{}) error {
+func (m *MgoClient) Insert(table string, msg interface{}) error {
 	session := m.Session.Clone()
 	defer session.Close()
 
-	collection := session.DB(dataBase).C(table)
+	collection := session.DB(m.dataBase).C(table)
 	err := collection.Insert(msg)
 
 	return err
 }
 
 // Update... 更新一条数据
-func (m *DBManager) Update(table string, id string, msg interface{}) error {
+func (m *MgoClient) Update(table string, id interface{}, msg interface{}) error {
 	session := m.Session.Clone()
 	defer session.Close()
 
-	collection := session.DB(dataBase).C(table)
+	collection := session.DB(m.dataBase).C(table)
 	err := collection.UpdateId(id, msg)
 
 	return err
