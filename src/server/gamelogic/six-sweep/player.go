@@ -2,11 +2,13 @@ package sixsweep
 
 import "server/gamelogic"
 
+const playerCount = 2
+
 type Player struct {
 	gamelogic.User
 }
 
-func NewPlayer(user gamelogic.User) *Player {
+func newPlayer(user gamelogic.User) *Player {
 	player := &Player{}
 	player.User = user
 	return player

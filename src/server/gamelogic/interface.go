@@ -23,11 +23,14 @@ type Player interface {
 	OnDisconnect()
 }
 
-// Game 游戏
+// Service服务
+type Service interface {
+	Post(func())
+}
+
 type Game interface {
 	// MsgRoute 消息处理
 	MsgRoute(proto.Message)
-	Post(func())
 	GameStart([]User) error
 	ReqGameRecord(User) proto.Message
 	ReportGameStart()
