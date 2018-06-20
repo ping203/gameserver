@@ -77,3 +77,18 @@ message CRespNotifyUserData {
     uint32 errCode = 1;
     string errMsg = 2;
 }
+
+// 请求玩家数据
+message CReqLeftClick {
+    uint32 x = 1;
+    uint32 y = 2;
+}
+
+// 返回玩家数据
+message CRespLeftClick {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint32 x = 3;
+    uint32 y = 4;
+
+}

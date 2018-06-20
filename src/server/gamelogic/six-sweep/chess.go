@@ -1,9 +1,20 @@
 package sixsweep
 
+import "server/gameproto/gamedef"
+
 type chess struct {
+	*gamedef.Chess
 	adjacentChess [side]*chess
-	isMine        bool
-	isVisible     bool
+}
+
+func newChess() *chess {
+	c := &chess{
+		Chess: &gamedef.Chess{
+			ChessType: gamedef.ChessTyp_CTBlank,
+		},
+		adjacentChess: [side]*chess{},
+	}
+	return c
 }
 
 // IsMine 是否是雷
@@ -18,7 +29,7 @@ func (p *chess) GetCount() uint32 {
 		if v == nil {
 			continue
 		}
-		if v.isMine {
+		if v.ChessType == gamedef.ChessTyp_CTMine {
 			count++
 		}
 	}

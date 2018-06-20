@@ -1,6 +1,7 @@
 package sixsweep
 
 import (
+	"fmt"
 	"reflect"
 
 	"server/gamelogic"
@@ -20,6 +21,8 @@ func register(message proto.Message, f handler) {
 	typ := reflect.TypeOf(message)
 	_, exist := gameMsgHandler[typ]
 	if exist {
-		panic("")
+		panic(fmt.Sprintf("message %v already register", message))
 	}
+
+	gameMsgHandler[typ] = f
 }

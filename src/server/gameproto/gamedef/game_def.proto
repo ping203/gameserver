@@ -29,3 +29,15 @@ message User {
     string nickname = 3; //昵称
     uint32 sexID = 4; //性别
 }
+
+enum ChessTyp {
+    CTInvalid = 0;
+    CTBlank = 1;
+    CTMine = 2;
+}
+
+message Chess {
+    ChessTyp chessType = 1; // 类型
+    bool visible = 2; // 是否可见
+    uint32 mineNum = 3;
+}

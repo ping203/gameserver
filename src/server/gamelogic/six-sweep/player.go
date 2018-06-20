@@ -6,6 +6,7 @@ const playerCount = 2
 
 type Player struct {
 	gamelogic.User
+	chessboard [][]*chess
 }
 
 func newPlayer(user gamelogic.User) *Player {
