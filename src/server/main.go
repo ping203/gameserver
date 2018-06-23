@@ -24,6 +24,7 @@ func main() {
 	lconf.LogFlag = conf.LogFlag
 	lconf.ConsolePort = conf.Server.ConsolePort
 	lconf.ProfilePath = conf.Server.ProfilePath
+	lconf.ConfigPath = conf.Server.ConfigFile
 
 	// 注册服务
 	leaf.RegisterService(servers,

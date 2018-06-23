@@ -3,13 +3,13 @@ package sixsweep
 import "server/gameproto/gamedef"
 
 type chess struct {
-	*gamedef.Chess
+	gamedef.Chess
 	adjacentChess [side]*chess
 }
 
 func newChess() *chess {
 	c := &chess{
-		Chess: &gamedef.Chess{
+		Chess: gamedef.Chess{
 			ChessType: gamedef.ChessTyp_CTBlank,
 		},
 		adjacentChess: [side]*chess{},

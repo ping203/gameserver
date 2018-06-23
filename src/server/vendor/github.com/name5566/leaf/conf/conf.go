@@ -17,4 +17,7 @@ var (
 	ListenAddr      string
 	ConnAddrs       []string
 	PendingWriteNum int
+
+	// config
+	ConfigPath string
 )

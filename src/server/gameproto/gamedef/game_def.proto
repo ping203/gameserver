@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package gamedef;
+import "github.com/wenxiu2199/gameserver/src/server/gameproto/gameconf/game_type.proto";
 
 // 用户登录信息
 message LoginInfo {
@@ -24,13 +25,49 @@ message ExtraAccountInfo {
 
 // 用户信息
 message User {
-    string _id = 1;
-    uint64 userID = 2; //玩家ID
-    string nickname = 3; //昵称
-    uint32 sexID = 4; //性别
+    uint64 userID = 1; //玩家ID
+    string nickname = 2; //昵称
+    uint32 sexID = 3; //性别
 }
 
-enum ChessTyp {
+message Individual {
+    int32 hp = 1;
+    int32 attack = 2;
+    int32 defense = 3;
+    int32 spAttack = 4;
+    int32 spDefense = 5;
+    int32 speed = 6;
+}
+
+// 武将信息
+message General {
+    uint64 pkID = 1;
+    uint32 generalID = 2; // 武将ID
+    Individual individual = 3; // 个体值
+    Individual effort = 4; // 努力值
+    uint32 skills = 5; // 技能
+    uint32 level = 6; // 等级
+}
+
+message Item {
+    uint64 pkID = 1;
+    uint32 itemID = 2; // 道具ID
+    uint32 num = 3; // 数量
+}
+
+message UserData {
+    User user = 1;
+    repeated  General generals = 2; // 武将
+    repeated Item items = 3;
+}
+
+// ===============Game数据====================
+message Buff {
+    gameconf.SkillEffectTyp buffType = 1;
+    uint32 last = 2;
+ }
+
+ enum ChessTyp {
     CTInvalid = 0;
     CTBlank = 1;
     CTMine = 2;
