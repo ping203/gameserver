@@ -7,11 +7,6 @@ import (
 	"server/gameproto/gamedef"
 )
 
-type buff struct {
-	buffType gameconf.SkillEffectTyp // 类型
-	lastTime uint32                  // 持续时间
-}
-
 type GameGeneral struct {
 	*Player
 	generalID uint32
@@ -23,8 +18,9 @@ type GameGeneral struct {
 	baseSpDefense int32
 	baseSpeed     int32
 
-	curHP int32 // 当前血量
-	buff  map[gameconf.SkillEffectTyp]*gamedef.Buff
+	curHP  int32 // 当前血量
+	buff   map[gameconf.SkillEffectTyp]*gamedef.Buff
+	skills []uint32
 }
 
 func newGameGeneral(general *gamedef.General, player *Player) (*GameGeneral, error) {
@@ -34,6 +30,7 @@ func newGameGeneral(general *gamedef.General, player *Player) (*GameGeneral, err
 	gg.buff = make(map[gameconf.SkillEffectTyp]*gamedef.Buff)
 	gg.calculateBase(general)
 	gg.curHP = gg.baseHp
+	gg.skills = general.Skills
 
 	return gg, nil
 }
@@ -50,4 +47,24 @@ func (p *GameGeneral) calculateBase(general *gamedef.General) error {
 	p.baseSpAttack = (conf.Satk*2+general.Individual.SpAttack+general.Effort.SpAttack/4)*int32(general.Level)/100 + 5
 	p.baseSpDefense = (conf.Sdef*2+general.Individual.SpDefense+general.Effort.SpDefense/4)*int32(general.Level)/100 + 5
 	p.baseSpeed = (conf.Spd*2+general.Individual.Speed+general.Effort.Speed/4)*int32(general.Level)/100 + 5
+
+	return nil
+}
+
+func (p *GameGeneral) checkSkill(skillID uint32) bool {
+	for _, v := range p.skills {
+		if v == skillID {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *GameGeneral) useSkill(skillID uint32) bool {
+	for _, v := range p.skills {
+		if v == skillID {
+			return true
+		}
+	}
+	return false
 }

@@ -1,6 +1,8 @@
 package gamelogic
 
 import (
+	"time"
+
 	"server/gameproto/gamedef"
 
 	"github.com/golang/protobuf/proto"
@@ -26,6 +28,7 @@ type Player interface {
 // Service服务
 type Service interface {
 	Post(func())
+	AfterPost(time.Duration, func())
 }
 
 type Game interface {

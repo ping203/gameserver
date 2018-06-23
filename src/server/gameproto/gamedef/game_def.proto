@@ -45,7 +45,7 @@ message General {
     uint32 generalID = 2; // 武将ID
     Individual individual = 3; // 个体值
     Individual effort = 4; // 努力值
-    uint32 skills = 5; // 技能
+    repeated uint32 skills = 5; // 技能
     uint32 level = 6; // 等级
 }
 
@@ -65,8 +65,9 @@ message UserData {
 message Buff {
     gameconf.SkillEffectTyp buffType = 1;
     uint32 last = 2;
- }
+}
 
+// ===================================
  enum ChessTyp {
     CTInvalid = 0;
     CTBlank = 1;

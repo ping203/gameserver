@@ -78,17 +78,17 @@ message CRespNotifyUserData {
     string errMsg = 2;
 }
 
-// 请求玩家数据
-message CReqLeftClick {
-    uint32 x = 1;
-    uint32 y = 2;
+
+
+// ===============Game数据====================
+message CReqUseSkill {
+    uint32 skillID = 1;
 }
 
 // 返回玩家数据
-message CRespLeftClick {
+message CRespUseSkill {
     uint32 errCode = 1;
     string errMsg = 2;
-    uint32 x = 3;
-    uint32 y = 4;
+    uint32 skillID = 3;
 
 }

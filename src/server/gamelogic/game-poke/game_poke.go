@@ -9,7 +9,7 @@ import (
 const side = 6
 
 type GamePoke struct {
-	Player []*Player
+	players map[uint64]*Player
 	gamelogic.Service
 
 	fsm *fsm.FSM
@@ -25,17 +25,25 @@ func NewGameSixSweep(svc gamelogic.Service, cfg *manager.ConfManager) *GamePoke 
 }
 
 func (p *GamePoke) Init(users []User) error {
-	p.Player = make([]*Player, 0, len(users))
+	p.players = make(map[uint64]*Player, len(users))
 	for _, v := range users {
 		player, err := newPlayer(v, p)
 		if err != nil {
 			return err
 		}
-		p.Player = append(p.Player, player)
+		p.players[v.ID()] = player
 	}
 	return nil
 }
 
 func (p *GamePoke) getConfig() *manager.ConfManager {
 	return p.ConfManager
+}
+
+func (p *GamePoke) findPlayByUserID(userID uint64) *Player {
+	player, exist := p.players[userID]
+	if !exist {
+		panic("findPlayByUserID")
+	}
+	return player
 }

@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"server/gamelogic"
+	"server/gameproto/cmsg"
 
 	"github.com/golang/protobuf/proto"
 )
@@ -25,4 +26,9 @@ func register(message proto.Message, f handler) {
 	}
 
 	gameMsgHandler[typ] = f
+}
+
+func userSkill(g *GamePoke, u gamelogic.User, message *cmsg.CReqUseSkill) {
+	//player := g.findPlayByUserID(u.ID())
+	//player.
 }
