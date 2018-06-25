@@ -222,8 +222,8 @@ SkillConf: [
 ]
 
 SkillEffectConf: [
-	{SkillEffectID: 1, SkillName: "灼烧", SkillEffectType: 1 }, 
-	{SkillEffectID: 2, SkillName: "攻击变化", SkillEffectType: 2 }
+	{SkillEffectID: 1, SkillName: "灼烧", SkillEffectType: 1, LevelUp: 0 }, 
+	{SkillEffectID: 2, SkillName: "攻击变化", SkillEffectType: 2, LevelUp: 1 }
 ]
 
 GeneralConf: [

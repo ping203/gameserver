@@ -92,3 +92,17 @@ message CRespUseSkill {
     uint32 skillID = 3;
 
 }
+
+message CNotifyUseSkill {
+    uint64 userID = 1;
+    uint32 skillID = 2;
+}
+
+message CNotifyGameStart {
+    gamedef.GameGeneral myGeneral = 1;
+    gamedef.GameGeneral opGeneral = 2;
+}
+
+message CNotifyGeneralStatus {
+    gamedef.GameGeneral gameGeneral = 1;
+}

@@ -42,10 +42,10 @@ message SkillEffect
 	int32 Max = 3; 
 	
 	// 触发概率
-	uint32 Chance = 4; 
+	int32 Chance = 4; 
 	
 	// 等级
-	uint32 Power = 5; 
+	int32 Power = 5; 
 	
 	// 效果ID
 	uint32 Id = 6; 
@@ -88,6 +88,9 @@ message SkillEffectConfDefine
 	
 	
 	SkillEffectTyp SkillEffectType = 3; // 效果类型
+	
+	
+	int32 LevelUp = 4; 
 
 }
 

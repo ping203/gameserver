@@ -1,6 +1,6 @@
 package gameconf
 
-import "server/gameproto/gameconf"
+import "github.com/wenxiu2199/gameserver/src/server/gameproto/gameconf"
 
 type effectConf struct {
 	cfg *GameConfig

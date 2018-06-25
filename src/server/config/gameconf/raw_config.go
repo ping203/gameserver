@@ -3,10 +3,9 @@ package gameconf
 import (
 	"io/ioutil"
 
-	"server/gameproto/gameconf"
-
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gameconf"
 	"sanguosha.com/games/sgs/framework/util"
 )
 

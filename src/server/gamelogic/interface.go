@@ -3,9 +3,8 @@ package gamelogic
 import (
 	"time"
 
-	"server/gameproto/gamedef"
-
 	"github.com/golang/protobuf/proto"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
 type User interface {
@@ -16,13 +15,8 @@ type User interface {
 	// IsRobot 是否机器人
 	IsRobot() bool
 	GetData() *gamedef.User
-}
-
-// Player 玩家
-type Player interface {
-	User
-	OnReconnect()
-	OnDisconnect()
+	UseItem(uint32) bool
+	GetGeneral() *gamedef.General
 }
 
 // Service服务
@@ -34,10 +28,17 @@ type Service interface {
 type Game interface {
 	// MsgRoute 消息处理
 	MsgRoute(proto.Message)
-	GameStart([]User) error
-	ReqGameRecord(User) proto.Message
+
+	UserJoin(User) error
+	UserQuit(User) error
+
+	IsEmpty() bool
+
+	GameStart() error
+	ReqGameRecord(User)
 	ReportGameStart()
 	ReportGameEnd()
 	ReportGameClear()
 	SendMsgBatch(msg proto.Message, users []User)
+	GetGameID() uint32
 }

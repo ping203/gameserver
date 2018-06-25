@@ -11,6 +11,8 @@ type GameConfig struct {
 	version   string
 
 	generalConf
+	skillConf
+	effectConf
 }
 
 // Init ...
@@ -52,7 +54,22 @@ func (p *GameConfig) Reload() error {
 }
 
 func (p *GameConfig) load() error {
-	err := p.afterLoad()
+	err := p.generalConf.init(p)
+	if err != nil {
+		return err
+	}
+
+	err = p.skillConf.init(p)
+	if err != nil {
+		return err
+	}
+
+	err = p.effectConf.init(p)
+	if err != nil {
+		return err
+	}
+
+	err = p.afterLoad()
 	if err != nil {
 		return err
 	}

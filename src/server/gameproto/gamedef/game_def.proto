@@ -28,6 +28,7 @@ message User {
     uint64 userID = 1; //玩家ID
     string nickname = 2; //昵称
     uint32 sexID = 3; //性别
+    uint32 fightGeneralID = 4; // 上阵武将ID
 }
 
 message Individual {
@@ -64,7 +65,23 @@ message UserData {
 // ===============Game数据====================
 message Buff {
     gameconf.SkillEffectTyp buffType = 1;
-    uint32 last = 2;
+    int32 last = 2;
+    int32 level = 3;
+}
+
+message GameGeneral {
+    uint32 generalID = 1;
+    uint32 level = 2;
+    int32 baseHp = 3;
+    int32 baseAttack = 4;
+    int32 baseDefense = 5;
+    int32 baseSpAttack = 6;
+    int32 baseSpDefense = 7;
+    int32 baseSpeed = 8;
+    int32  curHP = 9;
+    repeated Buff buffs  =10;
+    repeated uint32 skills = 11;
+    uint64 userID = 12;
 }
 
 // ===================================

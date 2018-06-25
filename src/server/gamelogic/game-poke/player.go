@@ -2,26 +2,18 @@ package poke
 
 import (
 	"server/gamelogic"
-	"server/gameproto/cmsg"
-	"server/gameproto/gamedef"
 )
 
 const playerCount = 2
 
-type User interface {
-	gamelogic.User
-	useItem(uint32) bool
-	getGeneral() *gamedef.General
-}
-
 type Player struct {
 	*GamePoke
-	User
+	gamelogic.User
 
 	GameGeneral
 }
 
-func newPlayer(user User, poke *GamePoke) (*Player, error) {
+func newPlayer(user gamelogic.User, poke *GamePoke) (*Player, error) {
 	player := &Player{}
 	player.User = user
 	player.GamePoke = poke
@@ -34,7 +26,7 @@ func newPlayer(user User, poke *GamePoke) (*Player, error) {
 }
 
 func (p *Player) initGeneral() error {
-	general := p.getGeneral()
+	general := p.GetGeneral()
 	gg, err := newGameGeneral(general, p)
 	if err != nil {
 		return err
@@ -43,14 +35,10 @@ func (p *Player) initGeneral() error {
 	return nil
 }
 
-func (p *Player) userSkill(skill uint32) {
-	ok := p.checkSkill(skill)
-	if !ok {
-		p.SendMsg(&cmsg.CRespUseSkill{
-			ErrCode: 1,
-		})
-		return
-	}
+func (p *Player) useSkill(skill uint32) error {
+	op := p.getOpponent()
+	err := p.GameGeneral.useSkill(skill, &op.GameGeneral)
+	return err
 }
 
 // 获取对手
