@@ -1,12 +1,30 @@
 package poke
 
 import (
+	"reflect"
+
 	"server/gamelogic"
 
 	"github.com/golang/protobuf/proto"
 )
 
 const playerCount = 2
+
+type Players []*Player
+
+func (p Players) Less(i, j int) bool {
+	return p[i].GameGeneral.getSpeed() > p[j].GameGeneral.getSpeed()
+}
+
+func (p Players) Len() int {
+	return len(p)
+}
+
+func (p Players) Swap(i, j int) {
+	t := p[i]
+	p[i] = p[j]
+	p[j] = t
+}
 
 type Player struct {
 	*GamePoke
@@ -28,6 +46,18 @@ func newPlayer(user gamelogic.User, poke *GamePoke) (*Player, error) {
 	}
 
 	return player, nil
+}
+
+// chooseRoute
+func (p *Player) chooseRoute(msg proto.Message) {
+	typ := reflect.TypeOf(msg)
+
+	handler, exist := gameChooseHandler[typ]
+	if !exist {
+		return
+	}
+
+	handler(p.GamePoke, p.User, msg)
 }
 
 func (p *Player) initGeneral() error {

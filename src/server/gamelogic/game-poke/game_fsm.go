@@ -1,11 +1,17 @@
 package poke
 
 import (
-	"server/gamelogic/fsm"
+	"time"
 
+	"server/gamelogic/fsm"
+	"server/util"
+
+	"github.com/golang/protobuf/proto"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
+
+const chooseTime = time.Second * 20
 
 const (
 	eventInit         = "event_init"
@@ -76,9 +82,39 @@ func newStateChoose(g *GamePoke) fsm.State {
 			eventPlayerAction: statePlayerAction,
 		},
 		OnEnter: func(e *fsm.Event) {
-
+			f := func() {
+				for _, v := range g.players {
+					if v.choose == nil {
+						skillNum := len(v.GameGeneral.Skills)
+						rand := util.RandNum(int32(skillNum))
+						v.choose = &cmsg.CReqUseSkill{
+							SkillID: v.GameGeneral.Skills[rand],
+						}
+					}
+				}
+				g.fsm.Event(eventPlayerAction)
+			}
+			g.cancel = g.AfterPost(chooseTime, f)
 		},
 		OnLeave: func(e *fsm.Event) {
+		},
+		InternalEvents: fsm.Callbacks{
+			"choose": func(e *fsm.Event) {
+				choose := e.Args[0].(proto.Message)
+				p := e.Args[0].(*Player)
+
+				p.choose = choose
+
+				// 是否所有都做出选择
+				for _, v := range g.players {
+					if v.choose == nil {
+						return
+					}
+				}
+				// 取消超时处理
+				g.cancel()
+				g.fsm.Event(eventPlayerAction)
+			},
 		},
 	}
 }
@@ -90,6 +126,20 @@ func newStatePlayerAction(g *GamePoke) fsm.State {
 			eventGameOver: stateGameOver,
 		},
 		OnEnter: func(e *fsm.Event) {
+			// 伤害操作
+			players := make(Players, 0, len(g.players))
+			for _, v := range g.players {
+				players = append(players, v)
+			}
+			g.sortPlayer(players)
+
+			for _, v := range players {
+				v.chooseRoute(v.choose)
+				if g.fsm.Current() != statePlayerAction {
+					return
+				}
+			}
+
 			g.fsm.Event(eventChoose)
 		},
 		OnLeave: func(e *fsm.Event) {

@@ -114,8 +114,9 @@ type gameService struct {
 func (p *gameService) Post(f func()) {
 	p.Skeleton.Post(f)
 }
-func (p *gameService) AfterPost(t time.Duration, f func()) {
-	p.Skeleton.AfterFunc(t, f)
+func (p *gameService) AfterPost(t time.Duration, f func()) func() {
+	timer := p.Skeleton.AfterFunc(t, f)
+	return timer.Stop
 }
 
 func newGameService() *gameService {

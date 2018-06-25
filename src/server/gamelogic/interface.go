@@ -22,12 +22,12 @@ type User interface {
 // Service服务
 type Service interface {
 	Post(func())
-	AfterPost(time.Duration, func())
+	AfterPost(time.Duration, func()) func()
 }
 
 type Game interface {
 	// MsgRoute 消息处理
-	MsgRoute(proto.Message)
+	MsgRoute(proto.Message, User)
 
 	UserJoin(User) error
 	UserQuit(User) error

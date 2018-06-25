@@ -1,6 +1,9 @@
 package poke
 
 import (
+	"reflect"
+	"sort"
+
 	"server/gamelogic"
 	"server/gamelogic/fsm"
 	"server/manager"
@@ -22,6 +25,8 @@ type GamePoke struct {
 
 	// 回合
 	round uint32
+
+	cancel func()
 }
 
 func NewGame(svc gamelogic.Service, cfg *manager.ConfManager, gameID uint32) *GamePoke {
@@ -53,13 +58,24 @@ func (p *GamePoke) findPlayByUserID(userID uint64) *Player {
 }
 
 // MsgRoute 消息处理
-func (p *GamePoke) MsgRoute(proto.Message) {
+func (p *GamePoke) MsgRoute(msg proto.Message, user gamelogic.User) {
+	typ := reflect.TypeOf(msg)
 
+	handler, exist := gameMsgHandler[typ]
+	if !exist {
+		return
+	}
+
+	handler(p, user, msg)
 }
 
 // GameStart 游戏开始
 func (p *GamePoke) GameStart() error {
 	return nil
+}
+
+func (p *GamePoke) sortPlayer(players Players) {
+	sort.Sort(players)
 }
 
 // ReqGameRecord...

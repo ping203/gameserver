@@ -5,20 +5,18 @@ import (
 	"reflect"
 
 	"server/gamelogic"
-	"server/gameproto/cmsg"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 )
 
-type handler func(*GamePoke, gamelogic.User, proto.Message)
-
-var gameMsgHandler = make(map[reflect.Type]handler)
+var gameChooseHandler = make(map[reflect.Type]handler)
 
 func init() {
-	register(chooseUseSkill)
+	chooseRegister(useSkill)
 }
 
-func register(h interface{}) {
+func chooseRegister(h interface{}) {
 	v := reflect.ValueOf(h)
 
 	msg := reflect.New(v.Type().In(2)).Elem().Interface().(proto.Message)
@@ -34,15 +32,13 @@ func register(h interface{}) {
 	}
 }
 
-func chooseUseSkill(g *GamePoke, u gamelogic.User, msg *cmsg.CReqUseSkill) {
-	resp := &cmsg.CRespUseSkill{}
-	if g.fsm.Current() != stateChoose {
-		resp.ErrCode = 1
-		u.SendMsg(resp)
+func useSkill(g *GamePoke, u gamelogic.User, msg *cmsg.CReqUseSkill) {
+	if g.fsm.Current() != statePlayerAction {
+		panic("err state")
 		return
 	}
 
-	// 做出选择
+	// 使用技能
 	player := g.findPlayByUserID(u.ID())
-	g.fsm.Event("sync", msg, player)
+	player.useSkill(msg.SkillID)
 }
