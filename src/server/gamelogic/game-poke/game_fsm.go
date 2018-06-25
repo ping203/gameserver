@@ -1,33 +1,44 @@
 package poke
 
-import "server/gamelogic/fsm"
+import (
+	"server/gamelogic/fsm"
 
-const (
-	eventStart    = "event_start"
-	eventPlay     = "event_play"
-	eventGameOver = "event_game_over"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
 const (
-	stateStart    = "state_start"
-	statePlay     = "state_play"
-	stateGameOver = "state_game_over"
+	eventInit         = "event_init"
+	eventStart        = "event_start"
+	eventChoose       = "event_choose"
+	eventPlayerAction = "event_player_action"
+	eventGameOver     = "event_game_over"
 )
 
-func newGameSixSweepFsm() *fsm.FSM {
+const (
+	stateInit         = "state_init"
+	stateStart        = "state_start"
+	stateChoose       = "state_choose"
+	statePlayerAction = "state_player_action"
+	stateGameOver     = "state_game_over"
+)
+
+func newGameFsm(g *GamePoke) *fsm.FSM {
 	states := fsm.States{
-		eventStart:    newStateStart(),
-		eventPlay:     newStatePlay(),
-		eventGameOver: newStateGameOver(),
+		eventInit:         newStateInit(g),
+		eventStart:        newStateStart(g),
+		eventChoose:       newStateChoose(g),
+		eventPlayerAction: newStatePlayerAction(g),
+		eventGameOver:     newStateGameOver(g),
 	}
 	f := fsm.NewFSM(stateStart, states, nil)
 	return f
 }
 
-func newStateStart() fsm.State {
+func newStateInit(g *GamePoke) fsm.State {
 	return fsm.State{
 		Transitions: fsm.Transitions{
-			eventPlay: statePlay,
+			eventInit: stateInit,
 		},
 		OnEnter: func(e *fsm.Event) {
 		},
@@ -36,19 +47,57 @@ func newStateStart() fsm.State {
 	}
 }
 
-func newStatePlay() fsm.State {
+func newStateStart(g *GamePoke) fsm.State {
 	return fsm.State{
 		Transitions: fsm.Transitions{
+			eventChoose: stateChoose,
+		},
+		OnEnter: func(e *fsm.Event) {
+			g.Start()
+			generals := make([]*gamedef.GameGeneral, 0, len(g.players))
+			for _, v := range g.players {
+				g := v.Player.GameGeneral.getStatus(true)
+				generals = append(generals, g)
+			}
+			g.notifyMessage(&cmsg.CNotifyGameStart{
+				Generals: generals,
+			})
+
+			g.fsm.Event(eventChoose)
+		},
+		OnLeave: func(e *fsm.Event) {
+		},
+	}
+}
+
+func newStateChoose(g *GamePoke) fsm.State {
+	return fsm.State{
+		Transitions: fsm.Transitions{
+			eventPlayerAction: statePlayerAction,
+		},
+		OnEnter: func(e *fsm.Event) {
+
+		},
+		OnLeave: func(e *fsm.Event) {
+		},
+	}
+}
+
+func newStatePlayerAction(g *GamePoke) fsm.State {
+	return fsm.State{
+		Transitions: fsm.Transitions{
+			eventChoose:   stateChoose,
 			eventGameOver: stateGameOver,
 		},
 		OnEnter: func(e *fsm.Event) {
+			g.fsm.Event(eventChoose)
 		},
 		OnLeave: func(e *fsm.Event) {
 		},
 	}
 }
 
-func newStateGameOver() fsm.State {
+func newStateGameOver(g *GamePoke) fsm.State {
 	return fsm.State{
 		Transitions: fsm.Transitions{
 			eventStart: stateStart,

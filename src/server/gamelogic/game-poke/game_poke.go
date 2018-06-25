@@ -19,20 +19,25 @@ type GamePoke struct {
 
 	fsm *fsm.FSM
 	*manager.ConfManager
+
+	// 回合
+	round uint32
 }
 
 func NewGame(svc gamelogic.Service, cfg *manager.ConfManager, gameID uint32) *GamePoke {
 	g := &GamePoke{}
-	g.fsm = newGameSixSweepFsm()
+	g.fsm = newGameFsm(g)
 	g.Service = svc
 	g.ConfManager = cfg
 	g.gameID = gameID
-	g.Init()
+	g.players = make(map[uint64]*Player, playerNm)
 	return g
 }
 
-func (p *GamePoke) Init() {
-	p.players = make(map[uint64]*Player, playerNm)
+func (p *GamePoke) Start() {
+	for _, v := range p.players {
+		v.initGeneral()
+	}
 }
 
 func (p *GamePoke) getConfig() *manager.ConfManager {

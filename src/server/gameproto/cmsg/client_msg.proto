@@ -99,8 +99,7 @@ message CNotifyUseSkill {
 }
 
 message CNotifyGameStart {
-    gamedef.GameGeneral myGeneral = 1;
-    gamedef.GameGeneral opGeneral = 2;
+    repeated gamedef.GameGeneral generals = 1;
 }
 
 message CNotifyGeneralStatus {

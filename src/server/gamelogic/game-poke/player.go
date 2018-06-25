@@ -2,6 +2,8 @@ package poke
 
 import (
 	"server/gamelogic"
+
+	"github.com/golang/protobuf/proto"
 )
 
 const playerCount = 2
@@ -11,6 +13,9 @@ type Player struct {
 	gamelogic.User
 
 	GameGeneral
+
+	// 本回合是否操作过
+	choose proto.Message
 }
 
 func newPlayer(user gamelogic.User, poke *GamePoke) (*Player, error) {
@@ -33,6 +38,14 @@ func (p *Player) initGeneral() error {
 	}
 	p.GameGeneral = *gg
 	return nil
+}
+
+func (p *Player) setChoose(msg proto.Message) {
+	p.choose = msg
+}
+
+func (p *Player) getChoose() proto.Message {
+	return p.choose
 }
 
 func (p *Player) useSkill(skill uint32) error {
