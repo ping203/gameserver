@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"time"
+
 	"server/config/gameconf"
 	"server/manager"
 
@@ -23,11 +25,16 @@ func Init(servers map[manager.ServerType]*chanrpc.Server) {
 	userMgr.init()
 
 	dbMgr = &manager.DbManager{}
-	dbMgr.Init()
+	dbMgr.Init("127.0.0.1:27017", "game1")
 
 	cfgMgr = &manager.ConfManager{}
 	cfgMgr.Init(&gameconf.GameConfigPathNode{
 		BaseConfigPath: lconf.ConfigPath,
 	})
 
+}
+
+func AfterPost(d time.Duration, f func()) func() {
+	timer := skeleton.AfterFunc(d, f)
+	return timer.Stop
 }

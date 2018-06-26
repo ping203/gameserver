@@ -1,7 +1,6 @@
 package mongodb
 
 import (
-	"server/gameproto/gamedef"
 	"server/logs"
 
 	"gopkg.in/mgo.v2-unstable"
@@ -10,11 +9,6 @@ import (
 type MgoClient struct {
 	*mgo.Session
 	dataBase string
-}
-
-type ModelUser struct {
-	ID   uint64 `bson:"_id"`
-	User *gamedef.User
 }
 
 // Init 初始化
@@ -33,7 +27,7 @@ func (m *MgoClient) Close() {
 }
 
 // Find... 查找一条数据
-func (m *MgoClient) Find(table string, id interface{}, result interface{}) (interface{}, error) {
+func (m *MgoClient) Find(table string, id interface{}, result interface{}) error {
 	session := m.Session.Clone()
 	defer session.Close()
 
@@ -41,10 +35,10 @@ func (m *MgoClient) Find(table string, id interface{}, result interface{}) (inte
 	err := collection.FindId(id).One(result)
 
 	if err != nil {
-		logs.Error("mongo_base method:Get " + err.Error())
-		return nil, err
+		logs.Error("mongo_base method:Get %v", err.Error())
+		return err
 	}
-	return result, nil
+	return nil
 }
 
 // Insert... 插入一条数据
@@ -54,7 +48,9 @@ func (m *MgoClient) Insert(table string, msg interface{}) error {
 
 	collection := session.DB(m.dataBase).C(table)
 	err := collection.Insert(msg)
-
+	if err != nil {
+		logs.Error("mongo_base method:Insert %v: msg %v", err.Error(), msg)
+	}
 	return err
 }
 

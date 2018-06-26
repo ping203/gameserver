@@ -10,6 +10,7 @@ import (
 var (
 	accountModel *model.AccountModel
 	serverMgr    *manager.ServerManager
+	dbMgr        *manager.DbManager
 )
 
 type db struct {
@@ -26,6 +27,9 @@ func Init(servers map[manager.ServerType]*chanrpc.Server) {
 
 	serverMgr = &manager.ServerManager{}
 	serverMgr.Init(servers)
+
+	dbMgr = &manager.DbManager{}
+	dbMgr.Init("127.0.0.1:27017", "account1")
 }
 
 func Post(f func()) {

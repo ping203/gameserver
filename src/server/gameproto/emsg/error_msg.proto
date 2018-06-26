@@ -35,4 +35,7 @@ enum LoginErr {
 enum BizErr {
     BE_Succeed = 0; //成功
     BE_LoadUserData  = 1; // 加载用户信息
+    BE_UserInitAlready = 2; // 已经创角
+    BE_NickNameInvalid = 3; // 昵称
+    BE_FirstGeneralInvalid = 4; // 初始选择不合理
 }

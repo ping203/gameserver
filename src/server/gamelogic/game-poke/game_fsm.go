@@ -153,6 +153,8 @@ func newStateGameOver(g *GamePoke) fsm.State {
 			eventStart: stateStart,
 		},
 		OnEnter: func(e *fsm.Event) {
+			//for _,v := range g.players{
+			//}
 		},
 		OnLeave: func(e *fsm.Event) {
 		},

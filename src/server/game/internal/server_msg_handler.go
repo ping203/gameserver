@@ -1,10 +1,9 @@
 package internal
 
 import (
-	"server/gameproto/emsg"
-	"server/gameproto/smsg"
-
 	"github.com/name5566/leaf/gate"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/emsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/smsg"
 )
 
 func init() {
@@ -24,7 +23,7 @@ func onGtGsReqLogin(req *smsg.GtGsReqLogin, agent gate.Agent) {
 
 		u.login()
 		resp.Account = u.account
-		resp.User = u.info
+		resp.User = u.info.User
 		u.Send2Gate(resp)
 	}
 	userMgr.onUserEnter(req.UserID, req.Account, req.Extra, agent, cbk)

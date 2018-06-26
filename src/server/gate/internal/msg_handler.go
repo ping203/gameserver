@@ -1,12 +1,12 @@
 package internal
 
 import (
-	"server/gameproto/cmsg"
-	"server/gameproto/emsg"
-	"server/gameproto/smsg"
 	"server/logs"
 
 	"github.com/name5566/leaf/gate"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/emsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/smsg"
 )
 
 func init() {

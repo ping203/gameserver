@@ -42,7 +42,7 @@ func (p *general) delByPkID(pkID uint64) {
 	}
 }
 
-func (p *general) addGeneral(pkID uint64, cp *gamedef.General) {
+func (p *general) addGeneral(cp *gamedef.General) {
 	general := &gamedef.General{
 		PkID:       util.GeneratePKID(),
 		GeneralID:  cp.GeneralID,
@@ -54,6 +54,14 @@ func (p *general) addGeneral(pkID uint64, cp *gamedef.General) {
 }
 
 func (p *general) getFightGeneral() (*gamedef.General, bool) {
-	g, exist := p.generalID2General[p.info.FightGeneralID]
+	g, exist := p.generalID2General[p.info.User.FightGeneralID]
 	return g, exist
+}
+
+func (p *general) randIndividual() uint32 {
+	util.RandNum(32)
+}
+
+func (p *general) chooseGeneral(generalID uint64) {
+	p.addGeneral(&gamedef.General{})
 }

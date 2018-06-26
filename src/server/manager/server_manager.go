@@ -6,6 +6,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/chanrpc"
 	"github.com/name5566/leaf/gate"
+	"github.com/sirupsen/logrus"
 )
 
 type ServerType uint32
@@ -42,6 +43,11 @@ func (p *ServerManager) Send2Game(msg proto.Message, agent gate.Agent) error {
 	if !exist {
 		return ErrServer
 	}
+
+	logrus.WithFields(
+		logrus.Fields{
+			"msg": msg,
+		}).Debug("msg 2 Game")
 	s.GoProto(msg, agent)
 
 	return nil
@@ -53,6 +59,10 @@ func (p *ServerManager) Send2Login(msg proto.Message, agent gate.Agent) error {
 	if !exist {
 		return ErrServer
 	}
+	logrus.WithFields(
+		logrus.Fields{
+			"msg": msg,
+		}).Debug("msg 2 Login")
 	s.GoProto(msg, agent)
 	return nil
 }
@@ -63,6 +73,10 @@ func (p *ServerManager) Send2Gate(msg proto.Message, agent gate.Agent) error {
 	if !exist {
 		return ErrServer
 	}
+	logrus.WithFields(
+		logrus.Fields{
+			"msg": msg,
+		}).Debug("msg 2 Gate")
 	s.GoProto(msg, agent)
 	return nil
 }
@@ -72,6 +86,10 @@ func (p *ServerManager) SendMsg(id interface{}, msg proto.Message, agent gate.Ag
 	if !exist {
 		return ErrServer
 	}
+	logrus.WithFields(
+		logrus.Fields{
+			"msg": msg,
+		}).Debug("msg 2 Client")
 	s.Go(id, msg, agent)
 	return nil
 }
@@ -87,11 +105,15 @@ func (p *ServerManager) Send2Clients(msg proto.Message, userID []uint64) error {
 }
 
 //Send2Clients 发送到单一客户端
-func (p *ServerManager) Send2Client(msg proto.Message, userID uint64) error {
+func (p *ServerManager) Send2Client(msg proto.Message, agent gate.Agent) error {
 	s, exist := p.server[GateServer]
 	if !exist {
 		return ErrServer
 	}
-	s.GoProto("Send2Client", msg, userID)
+	logrus.WithFields(
+		logrus.Fields{
+			"msg": msg,
+		}).Debug("msg 2 Client")
+	s.Go("Send2Client", msg, agent)
 	return nil
 }

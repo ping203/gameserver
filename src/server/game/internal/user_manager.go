@@ -15,6 +15,7 @@ func (p *userManager) init() {
 
 func (p *userManager) onUserEnter(userID uint64, account string, extra *gamedef.ExtraAccountInfo, agent gate.Agent, callBack func(*user, error)) {
 	u, exist := p.findUser(userID)
+	agent.SetUserData(userID)
 	if !exist {
 		p.addUser(userID, account, extra, agent, callBack)
 	} else {
@@ -23,6 +24,7 @@ func (p *userManager) onUserEnter(userID uint64, account string, extra *gamedef.
 			// todo 通知账号被登录
 			//u.send2Msg(&)
 			u.Agent = agent
+			u.Agent.SetUserData(uint64(0))
 		}
 		if callBack != nil {
 			callBack(u, nil)
@@ -58,21 +60,19 @@ func (p *userManager) loadUser(userID uint64, callBack func(*user, error)) {
 }
 
 func (p *userManager) loadGameUserData(userID uint64, u *user, callBack func(*user, error)) {
-	f := func(info *gamedef.User, err error) {
+	f := func(data *gamedef.UserData, err error) {
 		if err != nil {
 			if callBack != nil {
-				skeleton.Post(func() {
-					callBack(u, err)
-				})
+				callBack(u, err)
 			}
 			return
 		}
 
-		u.info = info
+		u.info = data
+		u.general.init(u, data.Generals)
+
 		if callBack != nil {
-			skeleton.Post(func() {
-				callBack(u, nil)
-			})
+			callBack(u, nil)
 		}
 	}
 	dbMgr.LoadUserAsync(userID, f)

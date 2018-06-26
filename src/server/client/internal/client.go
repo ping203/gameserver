@@ -140,7 +140,7 @@ func (p *Client) readLoop() {
 		}
 		msgRaw, err := p.processor.Unmarshal(data)
 		if err != nil {
-			panic(err.Error())
+			continue
 		}
 		err = p.processor.Route(msgRaw, nil)
 		if err != nil {

@@ -173,6 +173,10 @@ func (s *Server) Go(id interface{}, args ...interface{}) {
 	if f == nil {
 		return
 	}
+	msg, ok := args[0].(proto.Message)
+	if ok {
+		s.logs("msg %v: %v %v", id, reflect.TypeOf(msg), msg)
+	}
 
 	defer func() {
 		recover()

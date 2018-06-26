@@ -16,8 +16,3 @@ func MD5(str string) string {
 	h := hash.Sum(data)
 	return hex.EncodeToString(h)
 }
-
-// GeneratePKID todo 唯一ID生成
-func GeneratePKID() uint64 {
-	return 1
-}

@@ -1,9 +1,9 @@
 package internal
 
 import (
-	"server/gameproto/smsg"
-
 	"github.com/name5566/leaf/gate"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/smsg"
 )
 
 func init() {
@@ -11,14 +11,16 @@ func init() {
 }
 
 func onGtLsReqAuth(msg *smsg.GtLsReqAuth, agent gate.Agent) {
-	f := func(userID uint64, err error) {
+	f := func(account *gamedef.Account, err error) {
 		resp := &smsg.GtLsRespAuth{}
 		if err != nil {
-
+			resp.ErrCode = 1
+			serverMgr.Send2Gate(resp, agent)
+			return
 		}
 		resp.Account = msg.Account
-		resp.UserID = userID
+		resp.UserID = account.UserID
 		serverMgr.Send2Gate(resp, agent)
 	}
-	accountModel.CheckAccountAsync(msg.Account, msg.Password, f)
+	dbMgr.LoadAccountAsync(msg.Account, f)
 }

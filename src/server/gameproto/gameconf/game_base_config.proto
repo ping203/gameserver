@@ -18,13 +18,25 @@ message GameBaseConfig
 	repeated DoNotUseThisDefine DoNotUseThis = 1; // DoNotUseThis
 	
 	
-	repeated SkillConfDefine SkillConf = 2; // SkillConf
+	repeated GlobalconfDefine Globalconf = 2; // Globalconf
 	
 	
-	repeated SkillEffectConfDefine SkillEffectConf = 3; // SkillEffectConf
+	repeated SkillConfDefine SkillConf = 3; // SkillConf
 	
 	
-	repeated GeneralConfDefine GeneralConf = 4; // GeneralConf
+	repeated SkillEffectConfDefine SkillEffectConf = 4; // SkillEffectConf
+	
+	
+	repeated GeneralConfDefine GeneralConf = 5; // GeneralConf
+
+}
+
+// Defined in table: Globalconf
+message GlobalconfDefine
+{	
+	
+	
+	repeated uint32 UserInitGeneral = 1; 
 
 }
 
@@ -117,28 +129,31 @@ message GeneralConfDefine
 	string GeneralName = 2; // 武将名称
 	
 	
-	int32 Hp = 3; // 血量种族
+	SkillTyp Nature = 3; // 属性
 	
 	
-	int32 Atk = 4; // 攻击种族
+	int32 Hp = 4; // 血量种族
 	
 	
-	int32 Def = 5; // 防御种族
+	int32 Atk = 5; // 攻击种族
 	
 	
-	int32 Satk = 6; // 特攻种族
+	int32 Def = 6; // 防御种族
 	
 	
-	int32 Sdef = 7; // 特防种族
+	int32 Satk = 7; // 特攻种族
 	
 	
-	int32 Spd = 8; // 速度
+	int32 Sdef = 8; // 特防种族
 	
 	
-	repeated Learn LearnSkills = 9; // 学习技能
+	int32 Spd = 9; // 速度
 	
 	
-	repeated uint32 BaseSkills = 10; // 初始技能
+	repeated Learn LearnSkills = 10; // 学习技能
+	
+	
+	repeated uint32 BaseSkills = 11; // 初始技能
 
 }
 

@@ -13,6 +13,7 @@ type GameConfig struct {
 	generalConf
 	skillConf
 	effectConf
+	globalConf
 }
 
 // Init ...
@@ -54,7 +55,13 @@ func (p *GameConfig) Reload() error {
 }
 
 func (p *GameConfig) load() error {
-	err := p.generalConf.init(p)
+
+	err := p.globalConf.init(p)
+	if err != nil {
+		return err
+	}
+
+	err = p.generalConf.init(p)
 	if err != nil {
 		return err
 	}

@@ -1,8 +1,10 @@
 package gate
 
 import (
-	"server/gameproto/cmsg"
 	"server/msg"
+
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/smsg"
 )
 
 // 初始化路由
@@ -19,4 +21,6 @@ func bindClientMessage() {
 func sendClientMessage() {
 	msg.Processor.Register(&cmsg.CRespAuth{})
 	msg.Processor.Register(&cmsg.CRespLogin{})
+	msg.Processor.Register(&smsg.GtLsRespAuth{})
+	msg.Processor.Register(&smsg.GtGsRespLogin{})
 }

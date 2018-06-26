@@ -3,12 +3,12 @@ package internal
 import (
 	"reflect"
 
-	"server/gameproto/cmsg"
-	"server/gameproto/smsg"
 	"server/logs"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/gate"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/smsg"
 )
 
 func init() {

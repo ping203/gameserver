@@ -78,7 +78,17 @@ message CRespNotifyUserData {
     string errMsg = 2;
 }
 
-
+// ===============数据变更====================
+message CNotifyDataChange {
+    enum type {
+        DCTInvalid = 0;
+        DCTUser = 1;
+        DCTGeneral = 2;
+    }
+    repeated type changes = 1;
+    gamedef.User user = 2;
+    repeated gamedef.General generals = 3;
+}
 
 // ===============Game数据====================
 message CReqUseSkill {
@@ -104,4 +114,17 @@ message CNotifyGameStart {
 
 message CNotifyGeneralStatus {
     gamedef.GameGeneral gameGeneral = 1;
+}
+
+// 创建角色
+message CReqUserInit {
+   string nickName = 1;
+   uint32 firstGeneral  = 2;
+}
+
+message CRespUserInit {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    string nickName = 3;
+    uint32 firstGeneral  = 4;
 }

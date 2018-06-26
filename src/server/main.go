@@ -10,6 +10,7 @@ import (
 	"github.com/name5566/leaf"
 	"github.com/name5566/leaf/chanrpc"
 	lconf "github.com/name5566/leaf/conf"
+	"github.com/sirupsen/logrus"
 )
 
 var servers = map[manager.ServerType]*chanrpc.Server{
@@ -25,6 +26,12 @@ func main() {
 	lconf.ConsolePort = conf.Server.ConsolePort
 	lconf.ProfilePath = conf.Server.ProfilePath
 	lconf.ConfigPath = conf.Server.ConfigFile
+
+	logrus.SetLevel(logrus.Level(logrus.DebugLevel))
+
+	text := new(logrus.TextFormatter)
+	text.FullTimestamp = true
+	logrus.SetFormatter(text)
 
 	// 注册服务
 	leaf.RegisterService(servers,
