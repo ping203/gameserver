@@ -22,7 +22,7 @@ func (m *Module) OnInit() {
 }
 
 func (m *Module) OnDestroy() {
-
+	userMgr.close()
 }
 
 func (m *Module) RegisterService(servers map[manager.ServerType]*chanrpc.Server) {

@@ -11,8 +11,8 @@ func TestMongodb(t *testing.T) {
 	dbMgr := &MgoClient{}
 	dbMgr.Init("127.0.0.1:27017", "game1")
 
-	//mongodbUser(t, dbMgr)
-	mongodbAccount(t, dbMgr)
+	mongodbUser(t, dbMgr)
+	//mongodbAccount(t, dbMgr)
 
 }
 
@@ -20,21 +20,25 @@ func mongodbUser(t *testing.T, client *MgoClient) {
 	mgoUser := &MgoUser{
 		MgoClient: client,
 	}
-	err := mgoUser.Create(&gamedef.User{
-		UserID:   12,
-		Nickname: "asd",
+	err := mgoUser.Create(&gamedef.UserData{
+		User: &gamedef.User{
+			UserID:   231,
+			Nickname: "asd",
+		},
 	})
 	if err != nil {
 		t.Error(err)
 	}
-	err = mgoUser.Update(&gamedef.User{
-		UserID:   12,
-		Nickname: "asdwwwww",
+	err = mgoUser.Update(&gamedef.UserData{
+		User: &gamedef.User{
+			UserID:   231,
+			Nickname: "asdwwwww",
+		},
 	})
 	if err != nil {
 		t.Error(err)
 	}
-	u, err := mgoUser.FindUser(22)
+	u, err := mgoUser.Find(15265703724)
 	if err != nil {
 		t.Error(err)
 	}
@@ -59,7 +63,7 @@ func mongodbAccount(t *testing.T, client *MgoClient) {
 	if err != nil {
 		t.Error(err)
 	}
-	u, err := mgoAccount.FindAccount("asd")
+	u, err := mgoAccount.Find("asd")
 	if err != nil {
 		t.Error(err)
 	}

@@ -13,6 +13,10 @@ func (p *userManager) init() {
 	p.users = make(map[uint64]*user)
 }
 
+func (p *userManager) close() {
+
+}
+
 func (p *userManager) onUserEnter(userID uint64, account string, extra *gamedef.ExtraAccountInfo, agent gate.Agent, callBack func(*user, error)) {
 	u, exist := p.findUser(userID)
 	agent.SetUserData(userID)
@@ -38,6 +42,9 @@ func (p *userManager) addUser(userID uint64, account string, extra *gamedef.Extr
 		Agent:   agent,
 		account: account,
 	}
+
+	// 保存玩家信息
+	p.users[userID] = u
 	p.loadGameUserData(userID, u, callBack)
 }
 

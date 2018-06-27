@@ -3,11 +3,10 @@ package internal
 import (
 	"time"
 
-	"server/gameproto/cmsg"
-	"server/gameproto/emsg"
-
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/gate"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/emsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
@@ -64,7 +63,10 @@ func (p *user) Send2Gate(message proto.Message) {
 }
 
 func (p *user) SendUpdate() {
-	serverMgr.SendMsg("Send2Client", p.updateNotify, p.Agent)
+	if p.updateNotify != nil {
+		serverMgr.SendMsg("Send2Client", p.updateNotify, p.Agent)
+		p.updateNotify = nil
+	}
 }
 
 // ID 获取Uid
@@ -90,13 +92,32 @@ func (p *user) notifyUpdate(typ cmsg.CNotifyDataChangeType, data interface{}) {
 
 func (p *user) UpdateData(typ cmsg.CNotifyDataChangeType, data interface{}) {
 	p.notifyUpdate(typ, data)
-	if p.saveCancel != nil {
+
+	switch typ {
+	case cmsg.CNotifyDataChange_DCTGeneral:
+		p.info.Generals = p.general.toSlice()
+	default:
 		return
 	}
 
-	p.saveCancel = AfterPost(time.Minute*5, func() {
+	p.SaveUserDataDelay(time.Minute * 5)
+}
+
+func (p *user) SaveUserDataDelay(t time.Duration) {
+	if t == 0 {
+		if p.saveCancel != nil {
+			p.saveCancel()
+		}
 		dbMgr.FlushUserAsync(p.info)
-	})
+		return
+	} else {
+		if p.saveCancel != nil {
+			return
+		}
+		p.saveCancel = AfterPost(t, func() {
+			dbMgr.FlushUserAsync(p.info)
+		})
+	}
 }
 
 func (p *user) IsRobot() bool {
@@ -155,6 +176,24 @@ func (p *user) onReqUserInit(req *cmsg.CReqUserInit) {
 	// 可重名
 	p.info.User.Nickname = req.NickName
 
-	p.general.chooseGeneral()
+	g, err := p.general.chooseGeneral(req.FirstGeneral)
+	if err != nil {
+		resp.ErrCode = uint32(emsg.BizErr_BE_FirstGeneralInvalid)
+		resp.ErrMsg = emsg.BizErr_BE_FirstGeneralInvalid.String()
+		p.SendMsg(resp)
+		return
+	}
 
+	p.UpdateData(cmsg.CNotifyDataChange_DCTUser, p.info.User)
+	p.UpdateData(cmsg.CNotifyDataChange_DCTGeneral, []*gamedef.General{g})
+
+	p.SaveUserDataDelay(0)
+	p.SendMsg(resp)
+}
+
+func (p *user) onReqNotifyUserData(req *cmsg.CReqNotifyUserData) {
+	resp := &cmsg.CRespNotifyUserData{}
+
+	resp.Generals = p.general.toSlice()
+	p.SendMsg(resp)
 }

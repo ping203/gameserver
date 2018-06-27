@@ -40,6 +40,7 @@ func (m *MgoUser) FindOrCreate(id uint64) (*gamedef.UserData, error) {
 		err := m.Create(user)
 		return user, err
 	}
+
 	return item.User, err
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/conf"
 	"github.com/name5566/leaf/log"
+	"github.com/sirupsen/logrus"
 )
 
 // one server per goroutine (goroutine not safe)
@@ -145,7 +146,12 @@ func (s *Server) Exec(ci *CallInfo) {
 func (s *Server) GoProto(args ...interface{}) {
 	msg := args[0].(proto.Message)
 	id := reflect.TypeOf(msg)
-	s.logs("msg %v: %v", id, msg)
+	logrus.WithFields(
+		logrus.Fields{
+			"rpc":  id,
+			"type": id,
+			"msg":  msg,
+		}).Debug("process  GoProto msg")
 
 	f := s.functions[id]
 	if f == nil {
@@ -175,7 +181,12 @@ func (s *Server) Go(id interface{}, args ...interface{}) {
 	}
 	msg, ok := args[0].(proto.Message)
 	if ok {
-		s.logs("msg %v: %v %v", id, reflect.TypeOf(msg), msg)
+		logrus.WithFields(
+			logrus.Fields{
+				"rpc":  id,
+				"type": reflect.TypeOf(msg),
+				"msg":  msg,
+			}).Debug("process msg")
 	}
 
 	defer func() {

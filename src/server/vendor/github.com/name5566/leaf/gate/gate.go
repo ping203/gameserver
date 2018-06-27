@@ -1,14 +1,13 @@
 package gate
 
 import (
-	"github.com/name5566/leaf/chanrpc"
-	"github.com/name5566/leaf/log"
-	"github.com/name5566/leaf/network"
-	"github.com/sirupsen/logrus"
-
 	"net"
 	"reflect"
 	"time"
+
+	"github.com/name5566/leaf/chanrpc"
+	"github.com/name5566/leaf/log"
+	"github.com/name5566/leaf/network"
 )
 
 type Gate struct {
@@ -125,10 +124,6 @@ func (a *agent) OnClose() {
 
 func (a *agent) WriteMsg(msg interface{}) {
 	if a.gate.Processor != nil {
-		logrus.WithFields(
-			logrus.Fields{
-				"msg": msg,
-			}).Debug("write 2 client")
 		data, err := a.gate.Processor.Marshal(msg)
 		if err != nil {
 			log.Error("marshal message %v error: %v", reflect.TypeOf(msg), err)

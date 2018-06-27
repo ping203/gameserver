@@ -19,6 +19,7 @@ func onGtGsReqLogin(req *smsg.GtGsReqLogin, agent gate.Agent) {
 			resp.ErrCode = uint32(emsg.BizErr_BE_LoadUserData)
 			resp.ErrMsg = emsg.BizErr_BE_LoadUserData.String()
 			u.Send2Gate(resp)
+			return
 		}
 
 		u.login()

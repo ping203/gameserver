@@ -86,10 +86,6 @@ func (p *ServerManager) SendMsg(id interface{}, msg proto.Message, agent gate.Ag
 	if !exist {
 		return ErrServer
 	}
-	logrus.WithFields(
-		logrus.Fields{
-			"msg": msg,
-		}).Debug("msg 2 Client")
 	s.Go(id, msg, agent)
 	return nil
 }
@@ -110,10 +106,6 @@ func (p *ServerManager) Send2Client(msg proto.Message, agent gate.Agent) error {
 	if !exist {
 		return ErrServer
 	}
-	logrus.WithFields(
-		logrus.Fields{
-			"msg": msg,
-		}).Debug("msg 2 Client")
 	s.Go("Send2Client", msg, agent)
 	return nil
 }

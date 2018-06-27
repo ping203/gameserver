@@ -7,10 +7,17 @@ import (
 
 func init() {
 	skeleton.RegisterHandler(onReqUserInit)
+	skeleton.RegisterHandler(onReqNotifyUserData)
 }
 
 func onReqUserInit(req *cmsg.CReqUserInit, agent gate.Agent) {
 	if user, exist := userMgr.findUser(agent.UserData().(uint64)); exist {
 		user.onReqUserInit(req)
+	}
+}
+
+func onReqNotifyUserData(req *cmsg.CReqNotifyUserData, agent gate.Agent) {
+	if user, exist := userMgr.findUser(agent.UserData().(uint64)); exist {
+		user.onReqNotifyUserData(req)
 	}
 }
