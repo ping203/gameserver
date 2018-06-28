@@ -42,10 +42,6 @@ func (gm *gameManager) newGame() {
 	gm.setGameByID(id, g)
 }
 
-func (gm *gameManager) usersJoin(gameID uint32) {
-	delete(gm.games, gameID)
-}
-
 func (gm *gameManager) deleteGame(gameID uint32) {
 	delete(gm.games, gameID)
 }
@@ -84,6 +80,7 @@ func (gm *gameManager) userJoin(user *user, gameID uint32) error {
 	}
 
 	user.setGameID(gameID)
+	g.UserReady(user)
 	return nil
 }
 

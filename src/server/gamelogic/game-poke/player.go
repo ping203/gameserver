@@ -32,6 +32,8 @@ type Player struct {
 
 	GameGeneral
 
+	ready bool
+
 	// 本回合是否操作过
 	choose proto.Message
 }
@@ -68,6 +70,10 @@ func (p *Player) initGeneral() error {
 	}
 	p.GameGeneral = *gg
 	return nil
+}
+
+func (p *Player) setReady(ready bool) {
+	p.ready = ready
 }
 
 func (p *Player) setChoose(msg proto.Message) {

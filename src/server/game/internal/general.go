@@ -62,18 +62,6 @@ func (p *general) getFightGeneral() (*gamedef.General, bool) {
 	return g, exist
 }
 
-func (p *general) randIndividual() *gamedef.Individual {
-	rands := util.GetRandomN(32, 6)
-	return &gamedef.Individual{
-		Hp:        int32(rands[0]),
-		Attack:    int32(rands[1]),
-		Defense:   int32(rands[2]),
-		SpAttack:  int32(rands[3]),
-		SpDefense: int32(rands[4]),
-		Speed:     int32(rands[5]),
-	}
-}
-
 func (p *general) chooseGeneral(generalID uint32) (*gamedef.General, error) {
 	conf, exist := cfgMgr.GetConfig().GetGeneralConfByGeneralID(generalID)
 	if !exist {
@@ -81,7 +69,7 @@ func (p *general) chooseGeneral(generalID uint32) (*gamedef.General, error) {
 	}
 	general := &gamedef.General{
 		GeneralID:  generalID,
-		Individual: p.randIndividual(),
+		Individual: util.RandIndividual(),
 		Effort:     &gamedef.Individual{},
 		Skills:     conf.BaseSkills,
 		Level:      5,

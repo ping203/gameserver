@@ -119,6 +119,12 @@ message CNotifyGeneralStatus {
     gamedef.GameGeneral gameGeneral = 1;
 }
 
+message CNotifyGameStage {
+    gamedef.GameStageTyp stage = 1;
+    int32 lastTime = 2;
+}
+
+
 // 创建角色
 message CReqUserInit {
    string nickName = 1;

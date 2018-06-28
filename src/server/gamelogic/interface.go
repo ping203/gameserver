@@ -31,6 +31,7 @@ type Game interface {
 
 	UserJoin(User) error
 	UserQuit(User) error
+	UserReady(User) error
 
 	IsEmpty() bool
 

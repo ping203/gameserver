@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 	"sanguosha.com/games/sgs/framework/util"
 )
 
@@ -17,4 +18,16 @@ func getSeqID() uint64 {
 func GeneratePKID() uint64 {
 	id := projectStartTime + getSeqID()
 	return id
+}
+
+func RandIndividual() *gamedef.Individual {
+	rands := util.GetRandomN(32, 6)
+	return &gamedef.Individual{
+		Hp:        int32(rands[0]),
+		Attack:    int32(rands[1]),
+		Defense:   int32(rands[2]),
+		SpAttack:  int32(rands[3]),
+		SpDefense: int32(rands[4]),
+		Speed:     int32(rands[5]),
+	}
 }

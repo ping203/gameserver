@@ -44,11 +44,17 @@ func newGameFsm(g *GamePoke) *fsm.FSM {
 func newStateInit(g *GamePoke) fsm.State {
 	return fsm.State{
 		Transitions: fsm.Transitions{
-			eventInit: stateInit,
+			eventStart: stateStart,
 		},
 		OnEnter: func(e *fsm.Event) {
+
 		},
 		OnLeave: func(e *fsm.Event) {
+		},
+		InternalEvents: fsm.Callbacks{
+			"start": func(e *fsm.Event) {
+				g.fsm.Event(eventStart)
+			},
 		},
 	}
 }
@@ -94,7 +100,7 @@ func newStateChoose(g *GamePoke) fsm.State {
 				}
 				g.fsm.Event(eventPlayerAction)
 			}
-			g.cancel = g.AfterPost(chooseTime, f)
+			g.AfterPost(chooseTime, f)
 		},
 		OnLeave: func(e *fsm.Event) {
 		},
@@ -114,6 +120,7 @@ func newStateChoose(g *GamePoke) fsm.State {
 				// 取消超时处理
 				g.cancel()
 				g.fsm.Event(eventPlayerAction)
+				g.stop()
 			},
 		},
 	}
@@ -150,7 +157,7 @@ func newStatePlayerAction(g *GamePoke) fsm.State {
 func newStateGameOver(g *GamePoke) fsm.State {
 	return fsm.State{
 		Transitions: fsm.Transitions{
-			eventStart: stateStart,
+			eventInit: stateInit,
 		},
 		OnEnter: func(e *fsm.Event) {
 			//for _,v := range g.players{

@@ -84,6 +84,12 @@ message GameGeneral {
     uint64 userID = 12;
 }
 
+enum GameStageTyp {
+    GSTInvalid = 0;
+    GSTChoose = 1; // 技能选择阶段
+    GSTAction = 2; // 行动阶段
+}
+
 // ===================================
  enum ChessTyp {
     CTInvalid = 0;
