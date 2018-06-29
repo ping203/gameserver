@@ -2,10 +2,12 @@ package internal
 
 import (
 	"fmt"
+	"math"
 
 	"server/util"
 
 	"github.com/sirupsen/logrus"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
@@ -87,4 +89,15 @@ func (p *general) toSlice() []*gamedef.General {
 	}
 
 	return generals
+}
+
+func (p *general) addExp(pkID uint64, exp int32) {
+	general, exist := p.getByPkID(pkID)
+	if !exist {
+		return
+	}
+
+	general.Exp += exp
+	general.Level = uint32(math.Sqrt(float64(general.Exp / 100)))
+	p.user.UpdateData(cmsg.CNotifyDataChange_DCTGeneral, []*gamedef.General{general})
 }

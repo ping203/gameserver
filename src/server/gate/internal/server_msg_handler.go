@@ -18,6 +18,7 @@ func init() {
 	// 具体逻辑
 	skeleton.RegisterHandler(onGtLsRespAuth)
 	skeleton.RegisterHandler(onGtGsRespLogin)
+	skeleton.RegisterHandler(onGtGsRespLogout)
 }
 
 func onRespMsg(resp interface{}, agent gate.Agent) {
@@ -83,4 +84,10 @@ func onGtLsRespAuth(req *smsg.GtLsRespAuth, agent gate.Agent) {
 
 func onGtGsRespLogin(req *smsg.GtGsRespLogin, agent gate.Agent) {
 	onRespMsg(req, agent)
+}
+
+func onGtGsRespLogout(req *smsg.GtGsRespLogout, agent gate.Agent) {
+	if req.ErrCode == 0 && req.IsClose {
+		sessionMgr.removeSession(agent)
+	}
 }

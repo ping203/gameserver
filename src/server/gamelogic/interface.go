@@ -17,12 +17,15 @@ type User interface {
 	GetData() *gamedef.User
 	UseItem(uint32) bool
 	GetGeneral() *gamedef.General
+	AddExp(uint64, int32)
+	SetGameID(uint32)
 }
 
 // Service服务
 type Service interface {
 	Post(func())
 	AfterPost(time.Duration, func()) func()
+	GameOver(gameID uint32)
 }
 
 type Game interface {
@@ -31,15 +34,12 @@ type Game interface {
 
 	UserJoin(User) error
 	UserQuit(User) error
-	UserReady(User) error
+	UserReady(User, bool) error
 
 	IsEmpty() bool
 
 	GameStart() error
 	ReqGameRecord(User)
-	ReportGameStart()
-	ReportGameEnd()
-	ReportGameClear()
 	SendMsgBatch(msg proto.Message, users []User)
 	GetGameID() uint32
 }

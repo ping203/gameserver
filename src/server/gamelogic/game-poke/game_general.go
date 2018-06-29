@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"server/manager"
+	"server/util"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
@@ -36,6 +37,7 @@ func newGameGeneral(general *gamedef.General, player *Player) (*GameGeneral, err
 	gg.Skills = general.Skills
 	gg.Level = general.Level
 	gg.GameGeneral.UserID = player.ID()
+	gg.GameGeneral.PkID = general.PkID
 
 	return gg, nil
 }
@@ -84,6 +86,8 @@ func (p *GameGeneral) useSkill(skillID uint32, op *GameGeneral) error {
 		UserID:  p.Player.ID(),
 		SkillID: skillID,
 	})
+
+	logrus.Debug(fmt.Sprintf("玩家:%v 的武将:%v 使用了技能%v:", p.Player.ID(), p.GeneralID, skillID))
 	switch skillConf.SkillAttackType {
 	case gameconf.SkillAttackTyp_SATChange:
 		p.effect(skillConf, op)
@@ -136,6 +140,7 @@ func (p *GameGeneral) getStatus(visible bool) *gamedef.GameGeneral {
 	cp := p.GameGeneral
 
 	if visible {
+		cp.Skills = make([]uint32, 0, len(p.Skills))
 		for _, v := range p.Skills {
 			cp.Skills = append(cp.Skills, v)
 		}
@@ -156,16 +161,18 @@ func (p *GameGeneral) damage(cfg *gameconf.SkillConfDefine, op *GameGeneral) err
 		defense = op.getSpDefense()
 	}
 
-	damage := (float32(p.Level)*0.4+2)*float32(cfg.Power)*float32(attack)/float32(defense)/50 + 2
+	rand := util.RandomBetween(80, 120)
+	damage := int32((float32(p.Level)*0.4+2)*float32(cfg.Power)*float32(attack)/float32(defense)/50*float32(rand)/100) + 2
 
 	op.CurHP -= int32(damage)
-
+	logrus.Debug(fmt.Sprintf("造成%v 伤害", damage))
 	p.notifyMessage(&cmsg.CNotifyGeneralStatus{
 		GameGeneral: op.getStatus(true),
 	})
 
 	if op.die() {
 		p.Player.GamePoke.winner = p.Player.ID()
+		p.Player.GamePoke.fsm.Event("died")
 		// todo 游戏结束
 	}
 
@@ -216,4 +223,17 @@ func (p *GameGeneral) effect(cfg *gameconf.SkillConfDefine, op *GameGeneral) err
 		}
 	}
 	return nil
+}
+
+func (p *GameGeneral) getExp(win bool) int32 {
+	_, exist := p.getConfig().GetConfig().GetGeneralConfByGeneralID(p.GeneralID)
+	if !exist {
+		return 0
+	}
+
+	var mult int32 = 50
+	if win {
+		mult = 100
+	}
+	return int32(p.Level) * mult
 }

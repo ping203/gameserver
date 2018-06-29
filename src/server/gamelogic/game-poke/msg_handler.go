@@ -8,6 +8,7 @@ import (
 	"server/gameproto/cmsg"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/emsg"
 )
 
 type handler func(*GamePoke, gamelogic.User, proto.Message)
@@ -37,12 +38,23 @@ func register(h interface{}) {
 func chooseUseSkill(g *GamePoke, u gamelogic.User, msg *cmsg.CReqUseSkill) {
 	resp := &cmsg.CRespUseSkill{}
 	if g.fsm.Current() != stateChoose {
-		resp.ErrCode = 1
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInStage)
+		resp.ErrMsg = emsg.BizErr_BE_NotInStage.String()
 		u.SendMsg(resp)
 		return
 	}
 
 	// 做出选择
 	player := g.findPlayByUserID(u.ID())
-	g.fsm.Event("sync", msg, player)
+
+	if !player.GameGeneral.checkSkill(msg.SkillID) {
+		resp.ErrCode = uint32(emsg.BizErr_BE_HasNoSkill)
+		resp.ErrMsg = emsg.BizErr_BE_HasNoSkill.String()
+		u.SendMsg(resp)
+		return
+	}
+
+	g.fsm.Event("choose", msg, player)
+	resp.SkillID = msg.SkillID
+	u.SendMsg(resp)
 }

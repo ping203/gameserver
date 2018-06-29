@@ -6,6 +6,7 @@ import (
 	"server/gamelogic"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/sirupsen/logrus"
 )
 
 const playerCount = 2
@@ -32,7 +33,8 @@ type Player struct {
 
 	GameGeneral
 
-	ready bool
+	ready  bool
+	escape bool
 
 	// 本回合是否操作过
 	choose proto.Message
@@ -56,6 +58,11 @@ func (p *Player) chooseRoute(msg proto.Message) {
 
 	handler, exist := gameChooseHandler[typ]
 	if !exist {
+		logrus.WithFields(logrus.Fields{
+			"msgType":           typ,
+			"msg":               msg,
+			"gameChooseHandler": gameChooseHandler,
+		}).Error("chooseRoute")
 		return
 	}
 
@@ -74,6 +81,10 @@ func (p *Player) initGeneral() error {
 
 func (p *Player) setReady(ready bool) {
 	p.ready = ready
+}
+
+func (p *Player) setEscape(escape bool) {
+	p.escape = escape
 }
 
 func (p *Player) setChoose(msg proto.Message) {

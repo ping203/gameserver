@@ -38,4 +38,10 @@ enum BizErr {
     BE_UserInitAlready = 2; // 已经创角
     BE_NickNameInvalid = 3; // 昵称
     BE_FirstGeneralInvalid = 4; // 初始选择不合理
+    BE_AccountIsNotInit = 5; // 账号未初始化
+    BE_IsInGame = 6; // 已经在游戏中
+    BE_NotInGame = 7; // 不再游戏中
+    BE_UseSkillErr = 8; // 发动失败
+    BE_NotInStage = 9; // 不是正确的阶段
+    BE_HasNoSkill = 10; // 没有该技能
 }

@@ -39,12 +39,8 @@ func (p *user) isLogin() bool {
 	return p.connected
 }
 
-func (p *user) setGameID(gameID uint32) {
+func (p *user) SetGameID(gameID uint32) {
 	p.gameID = gameID
-}
-
-func (p *user) clearGameID() {
-	p.gameID = 0
 }
 
 // GetAccount 获取账号.
@@ -196,4 +192,55 @@ func (p *user) onReqNotifyUserData(req *cmsg.CReqNotifyUserData) {
 
 	resp.Generals = p.general.toSlice()
 	p.SendMsg(resp)
+}
+
+func (p *user) onReqStageFight(req *cmsg.CReqStageFight) {
+	resp := &cmsg.CRespStageFight{}
+
+	if _, exist := p.getFightGeneral(); !exist {
+		resp.ErrCode = uint32(emsg.BizErr_BE_AccountIsNotInit)
+		resp.ErrMsg = emsg.BizErr_BE_AccountIsNotInit.String()
+		p.SendMsg(resp)
+		return
+	}
+
+	if p.inGame() {
+		resp.ErrCode = uint32(emsg.BizErr_BE_IsInGame)
+		resp.ErrMsg = emsg.BizErr_BE_IsInGame.String()
+		p.SendMsg(resp)
+		return
+	}
+
+	aiUser := aiMgr.newAiUser(1)
+	gameMgr.startGameWithUsers(p, aiUser)
+
+	p.SendMsg(resp)
+}
+
+func (p *user) onReqUseSkill(req *cmsg.CReqUseSkill) {
+	resp := &cmsg.CRespUseSkill{}
+	if p.gameID == 0 {
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInGame)
+		resp.ErrMsg = emsg.BizErr_BE_NotInGame.String()
+		p.SendMsg(resp)
+		return
+	}
+
+	g, exist := gameMgr.getGameByID(p.gameID)
+	if !exist {
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInGame)
+		resp.ErrMsg = emsg.BizErr_BE_NotInGame.String()
+		p.SendMsg(resp)
+		return
+	}
+
+	g.MsgRoute(req, p)
+}
+
+func (p *user) AddExp(pkID uint64, exp int32) {
+	p.general.addExp(pkID, exp)
+}
+
+func (p *user) inGame() bool {
+	return p.gameID != 0
 }

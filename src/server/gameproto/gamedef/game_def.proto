@@ -48,6 +48,7 @@ message General {
     Individual effort = 4; // 努力值
     repeated uint32 skills = 5; // 技能
     uint32 level = 6; // 等级
+    int32 exp = 7; // 当前经验
 }
 
 message Item {
@@ -82,6 +83,7 @@ message GameGeneral {
     repeated Buff buffs  =10;
     repeated uint32 skills = 11;
     uint64 userID = 12;
+    uint64 pkID = 13;
 }
 
 enum GameStageTyp {

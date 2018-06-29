@@ -12,6 +12,8 @@ import (
 )
 
 const chooseTime = time.Second * 20
+const playTime = time.Second * 2
+const clearTime = time.Second * 30
 
 const (
 	eventInit         = "event_init"
@@ -31,13 +33,13 @@ const (
 
 func newGameFsm(g *GamePoke) *fsm.FSM {
 	states := fsm.States{
-		eventInit:         newStateInit(g),
-		eventStart:        newStateStart(g),
-		eventChoose:       newStateChoose(g),
-		eventPlayerAction: newStatePlayerAction(g),
-		eventGameOver:     newStateGameOver(g),
+		stateInit:         newStateInit(g),
+		stateStart:        newStateStart(g),
+		stateChoose:       newStateChoose(g),
+		statePlayerAction: newStatePlayerAction(g),
+		stateGameOver:     newStateGameOver(g),
 	}
-	f := fsm.NewFSM(stateStart, states, nil)
+	f := fsm.NewFSM(stateInit, states, nil)
 	return f
 }
 
@@ -75,7 +77,9 @@ func newStateStart(g *GamePoke) fsm.State {
 				Generals: generals,
 			})
 
-			g.fsm.Event(eventChoose)
+			g.AfterPost(1, func() {
+				g.fsm.Event(eventChoose)
+			})
 		},
 		OnLeave: func(e *fsm.Event) {
 		},
@@ -88,6 +92,7 @@ func newStateChoose(g *GamePoke) fsm.State {
 			eventPlayerAction: statePlayerAction,
 		},
 		OnEnter: func(e *fsm.Event) {
+			g.notifyGameStage(gamedef.GameStageTyp_GSTChoose, chooseTime)
 			f := func() {
 				for _, v := range g.players {
 					if v.choose == nil {
@@ -118,9 +123,10 @@ func newStateChoose(g *GamePoke) fsm.State {
 					}
 				}
 				// 取消超时处理
-				g.cancel()
-				g.fsm.Event(eventPlayerAction)
 				g.stop()
+				g.AfterPost(1, func() {
+					g.fsm.Event(eventPlayerAction)
+				})
 			},
 		},
 	}
@@ -133,6 +139,7 @@ func newStatePlayerAction(g *GamePoke) fsm.State {
 			eventGameOver: stateGameOver,
 		},
 		OnEnter: func(e *fsm.Event) {
+			g.notifyGameStage(gamedef.GameStageTyp_GSTAction, playTime)
 			// 伤害操作
 			players := make(Players, 0, len(g.players))
 			for _, v := range g.players {
@@ -141,15 +148,29 @@ func newStatePlayerAction(g *GamePoke) fsm.State {
 			g.sortPlayer(players)
 
 			for _, v := range players {
-				v.chooseRoute(v.choose)
-				if g.fsm.Current() != statePlayerAction {
-					return
+				if !g.isStart() {
+					v.chooseRoute(v.choose)
+					if g.fsm.Current() != statePlayerAction {
+						return
+					}
+					v.choose = nil
 				}
 			}
 
-			g.fsm.Event(eventChoose)
+			if !g.isStart() {
+				g.AfterPost(playTime, func() {
+					g.fsm.Event(eventChoose)
+				})
+			}
 		},
 		OnLeave: func(e *fsm.Event) {
+		},
+		InternalEvents: fsm.Callbacks{
+			"died": func(e *fsm.Event) {
+				g.AfterPost(1, func() {
+					g.fsm.Event(eventGameOver)
+				})
+			},
 		},
 	}
 }
@@ -160,8 +181,18 @@ func newStateGameOver(g *GamePoke) fsm.State {
 			eventInit: stateInit,
 		},
 		OnEnter: func(e *fsm.Event) {
-			//for _,v := range g.players{
-			//}
+			for _, v := range g.players {
+				exp := v.getOpponent().getExp(v.ID() == g.winner)
+				result := &cmsg.CNotifyGameResult{
+					Winner: g.winner,
+					Exp:    exp,
+				}
+				v.SendMsg(result)
+				v.AddExp(v.GameGeneral.PkID, exp)
+			}
+			g.AfterPost(clearTime, func() {
+				g.clearUsers()
+			})
 		},
 		OnLeave: func(e *fsm.Event) {
 		},

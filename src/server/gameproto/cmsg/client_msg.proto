@@ -93,7 +93,7 @@ message CNotifyDataChange {
     repeated gamedef.General generals = 3;
 }
 
-// ===============Game数据====================
+// ===============战斗数据====================
 message CReqUseSkill {
     uint32 skillID = 1;
 }
@@ -124,7 +124,12 @@ message CNotifyGameStage {
     int32 lastTime = 2;
 }
 
+message CNotifyGameResult {
+    uint64 winner = 1;
+    int32 exp = 2;
+}
 
+// ===============Game数据====================
 // 创建角色
 message CReqUserInit {
    string nickName = 1;
@@ -136,4 +141,13 @@ message CRespUserInit {
     string errMsg = 2;
     string nickName = 3;
     uint32 firstGeneral  = 4;
+}
+
+message CReqStageFight {
+    uint32 stageID = 1;
+}
+
+message CRespStageFight {
+    uint32 errCode = 1;
+    string errMsg = 2;
 }

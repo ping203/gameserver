@@ -71,3 +71,11 @@ func (p *aiUser) UseItem(uint32) bool {
 func (p *aiUser) GetGeneral() *gamedef.General {
 	return p.general
 }
+
+func (p *aiUser) SetGameID(gameID uint32) {
+	p.gameID = gameID
+}
+
+func (p *aiUser) AddExp(pkID uint64, exp int32) {
+
+}

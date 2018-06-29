@@ -29,7 +29,11 @@ func Init(servers map[manager.ServerType]*chanrpc.Server) {
 	serverMgr.Init(servers)
 
 	dbMgr = &manager.DbManager{}
-	dbMgr.Init("127.0.0.1:27017", "account1")
+	dbMgr.Init("127.0.0.1:27017", "account1", ChanRPC)
+}
+
+func Close() {
+	dbMgr.Close()
 }
 
 func Post(f func()) {

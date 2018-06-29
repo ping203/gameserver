@@ -7,12 +7,12 @@ import (
 
 	"server/gamelogic"
 	"server/gamelogic/fsm"
-	"server/gameproto/cmsg"
 	"server/manager"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
@@ -29,8 +29,6 @@ type GamePoke struct {
 	round   uint32
 	players map[uint64]*Player
 	winner  uint64
-
-	cancel func()
 }
 
 func NewGame(svc gamelogic.Service, cfg *manager.ConfManager, gameID uint32) *GamePoke {
@@ -64,15 +62,17 @@ func (p *GamePoke) Start() {
 	for _, v := range p.players {
 		v.initGeneral()
 	}
+
+	logrus.Debug("%v游戏开始:", p.gameID)
 }
 
-func (p *GamePoke) notifyGameStage(stage gamedef.GameStageTyp, s int32) {
+func (p *GamePoke) notifyGameStage(stage gamedef.GameStageTyp, s time.Duration) {
 	p.notifyMessage(&cmsg.CNotifyGameStage{
 		Stage:    stage,
-		LastTime: s,
+		LastTime: int32(s / time.Second),
 	})
 
-	logrus.Debug("进入阶段:%s", stage.String())
+	logrus.Debug("进入阶段:", stage.String())
 }
 
 func (p *GamePoke) getConfig() *manager.ConfManager {
@@ -109,26 +109,6 @@ func (p *GamePoke) sortPlayer(players Players) {
 	sort.Sort(players)
 }
 
-// ReqGameRecord...
-func (p *GamePoke) ReqGameRecord(gamelogic.User) {
-
-}
-
-// ReportGameStart...
-func (p *GamePoke) ReportGameStart() {
-
-}
-
-// ReportGameEnd..
-func (p *GamePoke) ReportGameEnd() {
-
-}
-
-// ReportGameClear...
-func (p *GamePoke) ReportGameClear() {
-
-}
-
 // SendMsgBatch...
 func (p *GamePoke) SendMsgBatch(msg proto.Message, users []gamelogic.User) {
 
@@ -143,12 +123,19 @@ func (p *GamePoke) UserJoin(user gamelogic.User) error {
 	if exist {
 		return errors.New("user already in room")
 	}
+
+	if user.GetGeneral() == nil {
+		return errors.New("no user general info")
+	}
 	player, err := newPlayer(user, p)
 	if err != nil {
 		return err
 	}
 
 	p.players[user.ID()] = player
+
+	user.SetGameID(p.gameID)
+	p.UserReady(user, true)
 
 	return nil
 }
@@ -175,18 +162,25 @@ func (p *GamePoke) allReady() bool {
 
 // UserQuit 玩家加入
 func (p *GamePoke) UserQuit(user gamelogic.User) error {
-	//player := p.findPlayByUserID(user.ID())
+	player := p.findPlayByUserID(user.ID())
+	player.setEscape(true)
 	// 结束游戏 or 托管
-	//if p.fsm.Current() == stateStart {
-	//	delete(p.players,user.ID())
-	//} else if p.fsm.Current() == statePlay {
-	//
-	//} else if p.fsm.Current() == stateGameOver {
-	//	delete(p.players,user.ID())
-	//}
+	if p.fsm.Current() != stateGameOver {
+		player.setEscape(true)
+	} else {
+		delete(p.players, user.ID())
+	}
+	user.SetGameID(0)
 
-	delete(p.players, user.ID())
+	if p.IsEmpty() {
+		p.Service.GameOver(p.gameID)
+	}
+
 	return nil
+}
+
+func (p *GamePoke) ReqGameRecord(gamelogic.User) {
+
 }
 
 // GetGameID...
@@ -200,11 +194,23 @@ func (p *GamePoke) IsEmpty() bool {
 		return true
 	}
 
-	return false
+	for _, v := range p.players {
+		if !v.escape {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (p *GamePoke) notifyMessage(msg proto.Message) {
 	for _, v := range p.players {
 		v.SendMsg(msg)
+	}
+}
+
+func (p *GamePoke) clearUsers() {
+	for _, v := range p.players {
+		p.UserQuit(v)
 	}
 }

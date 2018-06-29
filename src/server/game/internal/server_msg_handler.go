@@ -8,6 +8,7 @@ import (
 
 func init() {
 	skeleton.RegisterHandler(onGtGsReqLogin)
+	skeleton.RegisterHandler(onGtGsReqLogout)
 }
 
 func onGtGsReqLogin(req *smsg.GtGsReqLogin, agent gate.Agent) {
@@ -28,4 +29,20 @@ func onGtGsReqLogin(req *smsg.GtGsReqLogin, agent gate.Agent) {
 		u.Send2Gate(resp)
 	}
 	userMgr.onUserEnter(req.UserID, req.Account, req.Extra, agent, cbk)
+}
+
+func onGtGsReqLogout(req *smsg.GtGsReqLogout, agent gate.Agent) {
+	userID, ok := agent.UserData().(uint64)
+	if !ok {
+		serverMgr.Send2Gate(&smsg.GtGsRespLogout{
+			IsClose: req.IsClose,
+		}, agent)
+	}
+	if user, exist := userMgr.findUser(userID); exist {
+		userMgr.onUserRemove(user.info.User.UserID)
+		serverMgr.Send2Gate(&smsg.GtGsRespLogout{
+			IsClose: req.IsClose,
+			UserID:  userID,
+		}, agent)
+	}
 }

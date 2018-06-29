@@ -1,6 +1,8 @@
 package manager
 
 import (
+	"sync"
+
 	"server/manager/mongodb"
 
 	"github.com/name5566/leaf/chanrpc"
@@ -10,16 +12,16 @@ import (
 
 type DbManager struct {
 	worker *chanrpc.Server
-	close  chan bool
 
 	mongodb.MgoUser
 	mongodb.MgoAccount
+
+	*sync.WaitGroup
 }
 
-func (s *DbManager) Init(url string, dataBase string) {
-	s.worker = chanrpc.NewServer(10000)
-	s.close = make(chan bool)
-	s.Run(s.close)
+func (s *DbManager) Init(url string, dataBase string, service *chanrpc.Server) {
+	s.worker = service
+	s.WaitGroup = &sync.WaitGroup{}
 
 	mgoClient := &mongodb.MgoClient{}
 	mgoClient.Init(url, dataBase)
@@ -32,21 +34,10 @@ func (s *DbManager) Init(url string, dataBase string) {
 }
 
 func (s *DbManager) Run(closeSig chan bool) {
-	go func() {
-		for {
-			select {
-			case <-closeSig:
-				s.worker.Close()
-				return
-			case ci := <-s.worker.ChanCall:
-				s.worker.Exec(ci)
-			}
-		}
-	}()
 }
 
 func (s *DbManager) Close() {
-	s.close <- true
+	s.WaitGroup.Wait()
 }
 
 func (s *DbManager) LoadUserAsync(userID uint64, cbk func(*gamedef.UserData, error)) {
@@ -62,11 +53,13 @@ func (s *DbManager) LoadUserAsync(userID uint64, cbk func(*gamedef.UserData, err
 func (s *DbManager) FlushUserAsync(user *gamedef.UserData) {
 	// 拷贝一份数据
 	cp := *user
+	s.WaitGroup.Add(1)
 	go func() {
 		err := s.MgoUser.Update(&cp)
 		if err != nil {
 			logrus.Error("FlushUserAsync %v", cp)
 		}
+		s.WaitGroup.Done()
 	}()
 }
 

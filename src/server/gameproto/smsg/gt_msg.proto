@@ -36,3 +36,14 @@ message GtGsRespLogin{
     string account = 5;
     gamedef.User user = 6; // 用户数据
 }
+
+message GtGsReqLogout{
+    bool isClose = 1;
+}
+
+message GtGsRespLogout{
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint64 userID = 3;
+    bool isClose = 4;
+}

@@ -13,6 +13,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/module"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
 var (
@@ -38,6 +39,9 @@ type Client struct {
 	littleEndian bool
 	maxMsgLen    uint32
 	processor    *protobuf.Processor
+
+	userID  uint64
+	general *gamedef.General
 }
 
 func (p *Client) Init() {

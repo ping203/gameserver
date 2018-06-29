@@ -14,7 +14,11 @@ func (p *userManager) init() {
 }
 
 func (p *userManager) close() {
-
+	for _, v := range p.users {
+		if v.saveCancel != nil {
+			v.SaveUserDataDelay(0)
+		}
+	}
 }
 
 func (p *userManager) onUserEnter(userID uint64, account string, extra *gamedef.ExtraAccountInfo, agent gate.Agent, callBack func(*user, error)) {
@@ -27,13 +31,21 @@ func (p *userManager) onUserEnter(userID uint64, account string, extra *gamedef.
 		if u.Agent != agent {
 			// todo 通知账号被登录
 			//u.send2Msg(&)
-			u.Agent = agent
 			u.Agent.SetUserData(uint64(0))
+			u.Agent = agent
 		}
 		if callBack != nil {
 			callBack(u, nil)
 		}
 	}
+}
+
+func (p *userManager) onUserRemove(userID uint64) {
+	u, exist := p.findUser(userID)
+	if !exist {
+		return
+	}
+	u.connected = false
 }
 
 func (p *userManager) addUser(userID uint64, account string, extra *gamedef.ExtraAccountInfo, agent gate.Agent, callBack func(*user, error)) {
