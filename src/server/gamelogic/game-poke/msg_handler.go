@@ -5,9 +5,9 @@ import (
 	"reflect"
 
 	"server/gamelogic"
-	"server/gameproto/cmsg"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/emsg"
 )
 

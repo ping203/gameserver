@@ -112,7 +112,7 @@ func newStateChoose(g *GamePoke) fsm.State {
 		InternalEvents: fsm.Callbacks{
 			"choose": func(e *fsm.Event) {
 				choose := e.Args[0].(proto.Message)
-				p := e.Args[0].(*Player)
+				p := e.Args[1].(*Player)
 
 				p.choose = choose
 
