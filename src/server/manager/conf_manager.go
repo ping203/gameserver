@@ -6,8 +6,7 @@ import (
 
 	"server/config/gameconf"
 	"server/logs"
-
-	"sanguosha.com/games/sgs/framework/util"
+	"server/util"
 )
 
 // ConfManager ...
@@ -57,7 +56,7 @@ func (p *ConfManager) Reload() error {
 	}
 
 	p.gameCfg.SetVersion(p.generateVersion())
-	logs.Debug("reload game config success %v", util.GetCurrentTime().String())
+	logs.Debug("reload game config success %v", util.GetCurrentTimestamp())
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package poke
 
 import (
+	"errors"
 	"reflect"
 	"sort"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"server/manager"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/juju/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"

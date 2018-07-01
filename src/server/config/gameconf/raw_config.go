@@ -3,10 +3,11 @@ package gameconf
 import (
 	"io/ioutil"
 
+	"server/util"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/sirupsen/logrus"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gameconf"
-	"sanguosha.com/games/sgs/framework/util"
 )
 
 type GameConfigPathNode struct {
@@ -91,13 +92,13 @@ func (p *rawConfig) Reload() error {
 	err = p.load()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"time": util.GetCurrentTime().Local().String(),
+			"time": util.GetCurrentTimestamp(),
 		}).WithError(err).Error("reload raw config error")
 		return err
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"time": util.GetCurrentTime().Local().String(),
+		"time": util.GetCurrentTimestamp(),
 	}).Info("reload raw config success")
 	return nil
 }

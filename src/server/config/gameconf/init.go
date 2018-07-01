@@ -1,8 +1,9 @@
 package gameconf
 
 import (
+	"server/util"
+
 	"github.com/sirupsen/logrus"
-	"sanguosha.com/games/sgs/framework/util"
 )
 
 // GameConfig ...
@@ -39,7 +40,7 @@ func (p *GameConfig) Reload() error {
 	err := p.rawConfig.Reload()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"time": util.GetCurrentTime().Local().String(),
+			"time": util.GetCurrentTimestamp(),
 		}).WithError(err).Error("reload game raw config error")
 		return err
 	}
@@ -47,7 +48,7 @@ func (p *GameConfig) Reload() error {
 	err = p.load()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
-			"time": util.GetCurrentTime().Local().String(),
+			"time": util.GetCurrentTimestamp(),
 		}).WithError(err).Info("reload game config success")
 		return err
 	}

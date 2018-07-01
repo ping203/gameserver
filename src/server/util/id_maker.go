@@ -2,10 +2,9 @@ package util
 
 import (
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
-	"sanguosha.com/games/sgs/framework/util"
 )
 
-var projectStartTime = uint64(util.GetCurrentMicroTimestamp()) - 1514736000*1e3 // 2018/1/1 00:00:00
+var projectStartTime = uint64(GetCurrentMicroTimestamp()) - 1514736000*1e3 // 2018/1/1 00:00:00
 const maxSeqID = 1000
 
 var lastSeqID uint64 = 1
@@ -21,7 +20,7 @@ func GeneratePKID() uint64 {
 }
 
 func RandIndividual() *gamedef.Individual {
-	rands := util.GetRandomN(32, 6)
+	rands := GetRandomN(32, 6)
 	return &gamedef.Individual{
 		Hp:        int32(rands[0]),
 		Attack:    int32(rands[1]),
