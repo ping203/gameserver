@@ -162,6 +162,7 @@ func (p *Processor) Unmarshal(data []byte) (interface{}, error) {
 		return MsgRaw{id, data[2:]}, nil
 	} else {
 		msg := reflect.New(i.msgType.Elem()).Interface()
+		fmt.Println(reflect.TypeOf(msg), id)
 		return msg, proto.UnmarshalMerge(data[2:], msg.(proto.Message))
 	}
 }

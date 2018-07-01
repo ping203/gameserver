@@ -10,8 +10,8 @@ func GetCurrentTimestamp() int64 {
 	return time.Now().Unix()
 }
 
-func GetCurrentMicroTimestamp() int {
-	return time.Now().Nanosecond()
+func GetCurrentMicroTimestamp() int64 {
+	return int64(time.Now().UnixNano()) / 1e6
 }
 
 func MD5(str string) string {
