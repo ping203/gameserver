@@ -20,14 +20,14 @@ func onReqAuth(req *cmsg.CReqAuth, agent gate.Agent) {
 	if !exist {
 		resp.ErrCode = uint32(emsg.LoginErr_LE_UnAuthenticated)
 		resp.ErrMsg = emsg.LoginErr_LE_UnAuthenticated.String()
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
 	if session.isAuthing() {
 		resp.ErrCode = uint32(emsg.LoginErr_LE_Authenticating)
 		resp.ErrMsg = emsg.LoginErr_LE_Authenticating.String()
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
@@ -44,26 +44,26 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 	ses, exist := sessionMgr.getSessionByAgent(agent)
 	if !exist {
 		resp.ErrCode = 1
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
 	if ses.userID != req.UserID {
 		resp.ErrCode = 2
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
 	ok := ses.checkSign(req.Sign)
 	if !ok {
 		resp.ErrCode = 3
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
 	if ses.isLoging() {
 		resp.ErrCode = 3
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 		return
 	}
 
@@ -80,14 +80,14 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 		if err != nil {
 			resp.ErrCode = uint32(emsg.SystemErr_SE_Service)
 			resp.ErrMsg = emsg.SystemErr_SE_Service.String()
-			agent.WriteMsg(resp)
+			writeMsg(agent, resp)
 			return
 		}
 		msg := data.(*smsg.GtGsRespLogin)
 		if msg.ErrCode != 0 {
 			resp.ErrMsg = msg.ErrMsg
 			resp.ErrCode = msg.ErrCode
-			agent.WriteMsg(resp)
+			writeMsg(agent, resp)
 			return
 		}
 		_, exist := sessionMgr.getSessionByAgent(agent)
@@ -100,6 +100,6 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 		resp.UserID = msg.UserID
 		resp.User = msg.User
 
-		agent.WriteMsg(resp)
+		writeMsg(agent, resp)
 	}, requesterTimeOut)
 }

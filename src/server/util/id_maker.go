@@ -1,8 +1,6 @@
 package util
 
 import (
-	"fmt"
-
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/gamedef"
 )
 
@@ -18,7 +16,6 @@ func getSeqID() uint64 {
 
 func GeneratePKID() uint64 {
 	id := projectStartTime + getSeqID()
-	fmt.Println(id)
 	return id
 }
 

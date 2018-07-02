@@ -73,13 +73,13 @@ func onGtLsRespAuth(req *smsg.GtLsRespAuth, agent gate.Agent) {
 	s, exist := sessionMgr.getSessionByUserID(req.UserID)
 	if exist {
 		// 通知已经登录
-		agent.WriteMsg(&cmsg.CNotifyLoginInfo{
+		writeMsg(agent, &cmsg.CNotifyLoginInfo{
 			Account: req.Account,
 			Ip:      s.agent.LocalAddr().String(),
 		})
 	}
 
-	agent.WriteMsg(resp)
+	writeMsg(agent, resp)
 }
 
 func onGtGsRespLogin(req *smsg.GtGsRespLogin, agent gate.Agent) {

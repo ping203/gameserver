@@ -5,7 +5,10 @@ import (
 
 	"server/manager"
 
+	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/chanrpc"
+	"github.com/name5566/leaf/gate"
+	"github.com/sirupsen/logrus"
 )
 
 var sessionMgr *sessionManager
@@ -29,4 +32,9 @@ func Init(servers map[manager.ServerType]*chanrpc.Server) {
 
 func Post(f func()) {
 	skeleton.Post(f)
+}
+
+func writeMsg(agent gate.Agent, msg proto.Message) {
+	logrus.Debug("send2client:", msg.String())
+	agent.WriteMsg(msg)
 }
