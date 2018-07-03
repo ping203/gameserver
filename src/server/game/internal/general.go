@@ -78,7 +78,7 @@ func (p *general) chooseGeneral(generalID uint32) (*gamedef.General, error) {
 	}
 	g := p.addGeneral(general)
 
-	p.user.info.User.FightGeneralID = generalID
+	p.user.info.User.FightGeneralID = g.PkID
 	return g, nil
 }
 
