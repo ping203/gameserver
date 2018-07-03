@@ -52,6 +52,7 @@ message CRespLogin {
     uint64 userID = 3;
     gamedef.User user = 4;
     bool isReconnect = 5; //是否断线重连
+    repeated gamedef.General generals = 6;
 }
 
 // 玩家登出请求
