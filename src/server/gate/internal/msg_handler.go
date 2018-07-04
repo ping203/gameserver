@@ -99,6 +99,7 @@ func onReqLogin(req *cmsg.CReqLogin, agent gate.Agent) {
 		sessionMgr.addUserOnLoginSuccess(agent)
 		resp.UserID = msg.UserID
 		resp.User = msg.User
+		resp.Generals = msg.Generals
 
 		writeMsg(agent, resp)
 	}, requesterTimeOut)

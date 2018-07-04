@@ -35,6 +35,7 @@ message GtGsRespLogin{
     uint64 userID = 4;
     string account = 5;
     gamedef.User user = 6; // 用户数据
+    repeated gamedef.General generals = 7;
 }
 
 message GtGsReqLogout{

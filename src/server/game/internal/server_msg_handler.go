@@ -26,6 +26,7 @@ func onGtGsReqLogin(req *smsg.GtGsReqLogin, agent gate.Agent) {
 		u.login()
 		resp.Account = u.account
 		resp.User = u.info.User
+		resp.Generals = u.general.toSlice()
 		u.Send2Gate(resp)
 	}
 	userMgr.onUserEnter(req.UserID, req.Account, req.Extra, agent, cbk)
