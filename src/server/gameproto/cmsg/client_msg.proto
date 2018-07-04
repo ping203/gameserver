@@ -104,7 +104,6 @@ message CRespUseSkill {
     uint32 errCode = 1;
     string errMsg = 2;
     uint32 skillID = 3;
-
 }
 
 message CNotifyUseSkill {

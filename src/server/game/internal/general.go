@@ -60,7 +60,7 @@ func (p *general) addGeneral(cp *gamedef.General) *gamedef.General {
 }
 
 func (p *general) getFightGeneral() (*gamedef.General, bool) {
-	g, exist := p.generalID2General[p.info.User.FightGeneralID]
+	g, exist := p.pkID2General[p.info.User.FightGeneralID]
 	return g, exist
 }
 

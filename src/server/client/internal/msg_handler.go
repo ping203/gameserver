@@ -27,7 +27,7 @@ func (p *Client) req() {
 func (p *Client) reqAuth() {
 	logs.Debug("=========reqAuth=========")
 	p.WriteMsg(&cmsg.CReqAuth{
-		Account:  "1",
+		Account:  "zzz",
 		Password: "xxx",
 	})
 }
@@ -50,9 +50,9 @@ func (p *Client) reqLogin(sign string, userID uint64) {
 func (p *Client) onRespLogin(msg *cmsg.CRespLogin) {
 	log.Debug("onRespLogin:%v", msg)
 	p.userID = msg.User.UserID
-	//p.reqUserInit()
+	p.reqUserInit()
 	//p.reqNotifyUserData()
-	p.reqStageFight()
+	//p.reqStageFight()
 }
 
 func (p *Client) reqUserInit() {

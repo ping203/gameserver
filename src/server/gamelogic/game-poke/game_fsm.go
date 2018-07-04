@@ -190,9 +190,7 @@ func newStateGameOver(g *GamePoke) fsm.State {
 				v.SendMsg(result)
 				v.AddExp(v.GameGeneral.PkID, exp)
 			}
-			g.AfterPost(clearTime, func() {
-				g.clearUsers()
-			})
+			g.clearUsers()
 		},
 		OnLeave: func(e *fsm.Event) {
 		},
