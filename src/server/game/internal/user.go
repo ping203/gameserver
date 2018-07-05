@@ -241,7 +241,7 @@ func (p *user) onReqStageFight(req *cmsg.CReqStageFight) {
 
 	cf := cfgMgr.GetConfig().RandGeneral()
 	rand := util.RandNum(10)
-	level := int32(g.Level) + rand - 10
+	level := int32(g.Level) + rand - 5
 	if level <= 0 {
 		level = 1
 	}
