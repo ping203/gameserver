@@ -24,6 +24,9 @@ func bindClientMessage() {
 	msg.Router(&cmsg.CReqNotifyUserData{}, game.ChanRPC)
 	msg.Router(&cmsg.CReqStageFight{}, game.ChanRPC)
 	msg.Router(&cmsg.CReqUseSkill{}, game.ChanRPC)
+	msg.Router(&cmsg.CReqCatch{}, game.ChanRPC)
+	msg.Router(&cmsg.CReqLearnSkill{}, game.ChanRPC)
+	msg.Router(&cmsg.CReqSwitchGeneral{}, game.ChanRPC)
 }
 
 func sendClientMessage() {
@@ -36,9 +39,12 @@ func sendClientMessage() {
 	msg.Processor.Register(&cmsg.CRespNotifyUserData{})
 	msg.Processor.Register(&cmsg.CRespStageFight{})
 	msg.Processor.Register(&cmsg.CNotifyGameStart{})
-	msg.Processor.Register(&cmsg.CNotifyUseSkill{})
+	msg.Processor.Register(&cmsg.CNotifyGameAction{})
 	msg.Processor.Register(&cmsg.CNotifyGeneralStatus{})
 	msg.Processor.Register(&cmsg.CNotifyGameStage{})
 	msg.Processor.Register(&cmsg.CNotifyGameResult{})
 	msg.Processor.Register(&cmsg.CRespUseSkill{})
+	msg.Processor.Register(&cmsg.CRespLearnSkill{})
+	msg.Processor.Register(&cmsg.CRespCatch{})
+	msg.Processor.Register(&cmsg.CRespSwitchGeneral{})
 }

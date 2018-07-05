@@ -38,6 +38,7 @@ func newGameGeneral(general *gamedef.General, player *Player) (*GameGeneral, err
 	gg.Level = general.Level
 	gg.GameGeneral.UserID = player.ID()
 	gg.GameGeneral.PkID = general.PkID
+	gg.GameGeneral.Individual = general.Individual
 
 	return gg, nil
 }
@@ -82,7 +83,8 @@ func (p *GameGeneral) useSkill(skillID uint32, op *GameGeneral) error {
 		return ErrNoSkill
 	}
 
-	p.notifyMessage(&cmsg.CNotifyUseSkill{
+	p.notifyMessage(&cmsg.CNotifyGameAction{
+		Type:    cmsg.CNotifyGameAction_ATUseSkill,
 		UserID:  p.Player.ID(),
 		SkillID: skillID,
 	})
@@ -94,6 +96,29 @@ func (p *GameGeneral) useSkill(skillID uint32, op *GameGeneral) error {
 	default:
 		p.damage(skillConf, op)
 	}
+	return nil
+}
+
+func (p *GameGeneral) catch(op *GameGeneral) error {
+	conf, exist := p.getConfig().GetConfig().GetGeneralConfByGeneralID(op.GeneralID)
+	if !exist {
+		return fmt.Errorf("calculateBase: GetGeneralConfByGeneralID %v", op.GeneralID)
+	}
+
+	prob := (op.GameGeneral.BaseHp*3 - op.GameGeneral.CurHP*2) * int32(conf.Catch) * 100 / (op.GameGeneral.BaseHp * 3) / 255
+	rand := util.RandNum(100)
+	if prob >= rand {
+		p.Player.GamePoke.winner = p.Player.ID()
+		p.Player.GamePoke.fsm.Event("died")
+		p.Player.AddGeneral(&op.GameGeneral)
+	}
+	logrus.Debug(fmt.Sprintf("玩家:%v 捕捉 %v 概率: %v, 随机值: %v", p.Player.ID(), conf.GeneralName, prob, rand))
+	p.notifyMessage(&cmsg.CNotifyGameAction{
+		Type:    cmsg.CNotifyGameAction_ATCatch,
+		UserID:  p.Player.ID(),
+		Success: prob >= rand,
+	})
+
 	return nil
 }
 

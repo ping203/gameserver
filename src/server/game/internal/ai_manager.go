@@ -45,10 +45,10 @@ func (p *aiManager) idMaker() uint64 {
 	return util.GeneratePKID()
 }
 
-func (p *aiManager) newAiUser(generalID uint32) *aiUser {
+func (p *aiManager) newAiUser(generalID uint32, level uint32) *aiUser {
 	ai := newAiUser(p.idMaker())
 	p.setAiUser(ai)
-	ai.newGeneral(generalID)
+	ai.newGeneral(generalID, level)
 	return ai
 }
 

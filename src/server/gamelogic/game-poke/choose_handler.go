@@ -15,6 +15,7 @@ var gameChooseHandler = make(map[reflect.Type]handler)
 
 func init() {
 	chooseRegister(useSkill)
+	chooseRegister(catch)
 }
 
 func chooseRegister(h interface{}) {
@@ -42,6 +43,24 @@ func useSkill(g *GamePoke, u gamelogic.User, msg *cmsg.CReqUseSkill) {
 	// 使用技能
 	player := g.findPlayByUserID(u.ID())
 	err := player.useSkill(msg.SkillID)
+	if err != nil {
+		logrus.WithFields(logrus.Fields{
+			"gameID": g.gameID,
+			"user":   u.ID(),
+			"msg":    msg.String(),
+		}).WithError(err).Error("useSkill")
+	}
+}
+
+func catch(g *GamePoke, u gamelogic.User, msg *cmsg.CReqCatch) {
+	if g.fsm.Current() != statePlayerAction {
+		panic("err state")
+		return
+	}
+
+	// 使用技能
+	player := g.findPlayByUserID(u.ID())
+	err := player.catch()
 	if err != nil {
 		logrus.WithFields(logrus.Fields{
 			"gameID": g.gameID,

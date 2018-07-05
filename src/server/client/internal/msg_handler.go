@@ -18,6 +18,7 @@ func (p *Client) handler() {
 	skeleton.RegisterHandlerClient(p.onNotifyGameStage)
 	skeleton.RegisterHandlerClient(p.onNotifyGameStart)
 	skeleton.RegisterHandlerClient(p.onRespUseSkill)
+	skeleton.RegisterHandlerClient(p.onRespCatch)
 }
 
 func (p *Client) req() {
@@ -27,7 +28,7 @@ func (p *Client) req() {
 func (p *Client) reqAuth() {
 	logs.Debug("=========reqAuth=========")
 	p.WriteMsg(&cmsg.CReqAuth{
-		Account:  "zzz",
+		Account:  "5233",
 		Password: "xxx",
 	})
 }
@@ -52,7 +53,7 @@ func (p *Client) onRespLogin(msg *cmsg.CRespLogin) {
 	p.userID = msg.User.UserID
 	p.reqUserInit()
 	//p.reqNotifyUserData()
-	//p.reqStageFight()
+	p.reqStageFight()
 }
 
 func (p *Client) reqUserInit() {
@@ -93,7 +94,8 @@ func (p *Client) onNotifyGameResult(msg *cmsg.CNotifyGameResult) {
 func (p *Client) onNotifyGameStage(msg *cmsg.CNotifyGameStage) {
 	switch msg.Stage {
 	case gamedef.GameStageTyp_GSTChoose:
-		p.reqUseSkill()
+		//p.reqUseSkill()
+		p.reqCatch()
 	}
 }
 
@@ -117,5 +119,23 @@ func (p *Client) reqUseSkill() {
 }
 
 func (p *Client) onRespUseSkill(msg *cmsg.CRespUseSkill) {
+	log.Debug("%v", msg)
+}
+
+func (p *Client) reqCatch() {
+	logs.Debug("=========reqCatch=========")
+	p.WriteMsg(&cmsg.CReqCatch{})
+}
+
+func (p *Client) onRespCatch(msg *cmsg.CRespCatch) {
+	log.Debug("%v", msg)
+}
+
+func (p *Client) reqLearnSkill() {
+	logs.Debug("=========reqLearnSkill=========")
+	p.WriteMsg(&cmsg.CReqLearnSkill{})
+}
+
+func (p *Client) onRespLearnSkill(msg *cmsg.CRespLearnSkill) {
 	log.Debug("%v", msg)
 }

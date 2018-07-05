@@ -17,6 +17,7 @@ var gameMsgHandler = make(map[reflect.Type]handler)
 
 func init() {
 	register(chooseUseSkill)
+	register(chooseCatch)
 }
 
 func register(h interface{}) {
@@ -56,5 +57,20 @@ func chooseUseSkill(g *GamePoke, u gamelogic.User, msg *cmsg.CReqUseSkill) {
 
 	g.fsm.Event("choose", msg, player)
 	resp.SkillID = msg.SkillID
+	u.SendMsg(resp)
+}
+
+func chooseCatch(g *GamePoke, u gamelogic.User, msg *cmsg.CReqCatch) {
+	resp := &cmsg.CRespCatch{}
+	if g.fsm.Current() != stateChoose {
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInStage)
+		resp.ErrMsg = emsg.BizErr_BE_NotInStage.String()
+		u.SendMsg(resp)
+		return
+	}
+
+	// 做出选择
+	player := g.findPlayByUserID(u.ID())
+	g.fsm.Event("choose", msg, player)
 	u.SendMsg(resp)
 }

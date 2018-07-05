@@ -95,6 +95,7 @@ message CNotifyDataChange {
 }
 
 // ===============战斗数据====================
+// 使用技能
 message CReqUseSkill {
     uint32 skillID = 1;
 }
@@ -106,9 +107,25 @@ message CRespUseSkill {
     uint32 skillID = 3;
 }
 
-message CNotifyUseSkill {
+message CNotifyGameAction {
+    enum ActionTyp {
+        ATInvalid = 0;
+        ATUseSkill = 1;
+        ATCatch = 2;
+    }
     uint64 userID = 1;
-    uint32 skillID = 2;
+    ActionTyp type = 2;
+    uint32 skillID = 3;
+    bool success = 4;
+}
+
+message CReqCatch {
+}
+
+// 返回玩家数据
+message CRespCatch {
+    uint32 errCode = 1;
+    string errMsg = 2;
 }
 
 message CNotifyGameStart {
@@ -150,4 +167,25 @@ message CReqStageFight {
 message CRespStageFight {
     uint32 errCode = 1;
     string errMsg = 2;
+}
+
+message CReqLearnSkill {
+    uint64 generalPkID = 1;
+    uint32 skillID = 2;
+    uint32 position = 3;
+}
+
+message CRespLearnSkill {
+    uint32 errCode = 1;
+    string errMsg = 2;
+}
+
+message CReqSwitchGeneral {
+    uint64 generalPKID = 1;
+}
+
+message CRespSwitchGeneral {
+    uint32 errCode = 1;
+    string errMsg = 2;
+    uint32 generalPKID  = 3;
 }

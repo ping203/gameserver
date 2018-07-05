@@ -9,6 +9,9 @@ func init() {
 	skeleton.RegisterClientHandler(onReqNotifyUserData)
 	skeleton.RegisterClientHandler(onReqStageFight)
 	skeleton.RegisterClientHandler(onReqUseSkill)
+	skeleton.RegisterClientHandler(onReqLearnSkill)
+	skeleton.RegisterClientHandler(onReqCatch)
+	skeleton.RegisterClientHandler(onReqSwithGeneral)
 }
 
 func onReqUserInit(req *cmsg.CReqUserInit, userID uint64) {
@@ -32,5 +35,23 @@ func onReqStageFight(req *cmsg.CReqStageFight, userID uint64) {
 func onReqUseSkill(req *cmsg.CReqUseSkill, userID uint64) {
 	if user, exist := userMgr.findUser(userID); exist {
 		user.onReqUseSkill(req)
+	}
+}
+
+func onReqLearnSkill(req *cmsg.CReqLearnSkill, userID uint64) {
+	if user, exist := userMgr.findUser(userID); exist {
+		user.onReqLearnSkill(req)
+	}
+}
+
+func onReqCatch(req *cmsg.CReqCatch, userID uint64) {
+	if user, exist := userMgr.findUser(userID); exist {
+		user.onReqCatch(req)
+	}
+}
+
+func onReqSwithGeneral(req *cmsg.CReqSwitchGeneral, userID uint64) {
+	if user, exist := userMgr.findUser(userID); exist {
+		user.onReqSwitchGeneral(req)
 	}
 }

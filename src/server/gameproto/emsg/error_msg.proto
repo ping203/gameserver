@@ -44,4 +44,8 @@ enum BizErr {
     BE_UseSkillErr = 8; // 发动失败
     BE_NotInStage = 9; // 不是正确的阶段
     BE_HasNoSkill = 10; // 没有该技能
+    BE_GeneralPkID = 11; // 武将PKID不合法
+    BE_CanNotLearn = 12; // 不可以学习改技能
+    BE_GeneralConf = 13; // 武将配置错误
+    BE_AlreadyLearn = 14; // 已经学习
 }

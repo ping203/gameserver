@@ -3,6 +3,8 @@ package internal
 import (
 	"time"
 
+	"server/util"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/name5566/leaf/gate"
 	"github.com/wenxiu2199/gameserver/src/server/gameproto/cmsg"
@@ -86,6 +88,14 @@ func (p *user) notifyUpdate(typ cmsg.CNotifyDataChangeType, data interface{}) {
 	p.updateNotify.Changes = append(p.updateNotify.Changes, typ)
 }
 
+func (p *user) UpdateGeneral(generals ...*gamedef.General) {
+	p.UpdateData(cmsg.CNotifyDataChange_DCTGeneral, generals)
+}
+
+func (p *user) UpdateUser(user *gamedef.User) {
+	p.UpdateData(cmsg.CNotifyDataChange_DCTUser, user)
+}
+
 func (p *user) UpdateData(typ cmsg.CNotifyDataChangeType, data interface{}) {
 	p.notifyUpdate(typ, data)
 
@@ -137,6 +147,24 @@ func (p *user) GetGeneral() *gamedef.General {
 	return g
 }
 
+func (p *user) AddExp(pkID uint64, exp int32) {
+	p.general.addExp(pkID, exp)
+}
+
+func (p *user) inGame() bool {
+	return p.gameID != 0
+}
+
+func (p *user) AddGeneral(gameGeneral *gamedef.GameGeneral) {
+	p.general.addGeneral(&gamedef.General{
+		GeneralID:  gameGeneral.GeneralID,
+		Individual: gameGeneral.Individual,
+		Effort:     &gamedef.Individual{},
+		Level:      gameGeneral.Level,
+		Skills:     gameGeneral.Skills,
+	})
+}
+
 func (p *user) onReqUserInit(req *cmsg.CReqUserInit) {
 	resp := &cmsg.CRespUserInit{}
 
@@ -172,7 +200,7 @@ func (p *user) onReqUserInit(req *cmsg.CReqUserInit) {
 	// 可重名
 	p.info.User.Nickname = req.NickName
 
-	g, err := p.general.chooseGeneral(req.FirstGeneral)
+	_, err := p.general.chooseGeneral(req.FirstGeneral)
 	if err != nil {
 		resp.ErrCode = uint32(emsg.BizErr_BE_FirstGeneralInvalid)
 		resp.ErrMsg = emsg.BizErr_BE_FirstGeneralInvalid.String()
@@ -180,8 +208,7 @@ func (p *user) onReqUserInit(req *cmsg.CReqUserInit) {
 		return
 	}
 
-	p.UpdateData(cmsg.CNotifyDataChange_DCTUser, p.info.User)
-	p.UpdateData(cmsg.CNotifyDataChange_DCTGeneral, []*gamedef.General{g})
+	p.UpdateUser(p.info.User)
 
 	p.SaveUserDataDelay(0)
 	p.SendMsg(resp)
@@ -197,7 +224,8 @@ func (p *user) onReqNotifyUserData(req *cmsg.CReqNotifyUserData) {
 func (p *user) onReqStageFight(req *cmsg.CReqStageFight) {
 	resp := &cmsg.CRespStageFight{}
 
-	if _, exist := p.getFightGeneral(); !exist {
+	g, exist := p.getFightGeneral()
+	if !exist {
 		resp.ErrCode = uint32(emsg.BizErr_BE_AccountIsNotInit)
 		resp.ErrMsg = emsg.BizErr_BE_AccountIsNotInit.String()
 		p.SendMsg(resp)
@@ -211,7 +239,14 @@ func (p *user) onReqStageFight(req *cmsg.CReqStageFight) {
 		return
 	}
 
-	aiUser := aiMgr.newAiUser(1)
+	cf := cfgMgr.GetConfig().RandGeneral()
+	rand := util.RandNum(10)
+	level := int32(g.Level) + rand - 10
+	if level <= 0 {
+		level = 1
+	}
+
+	aiUser := aiMgr.newAiUser(cf.GeneralID, uint32(level))
 	gameMgr.startGameWithUsers(p, aiUser)
 
 	p.SendMsg(resp)
@@ -237,10 +272,22 @@ func (p *user) onReqUseSkill(req *cmsg.CReqUseSkill) {
 	g.MsgRoute(req, p)
 }
 
-func (p *user) AddExp(pkID uint64, exp int32) {
-	p.general.addExp(pkID, exp)
-}
+func (p *user) onReqCatch(req *cmsg.CReqCatch) {
+	resp := &cmsg.CRespUseSkill{}
+	if p.gameID == 0 {
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInGame)
+		resp.ErrMsg = emsg.BizErr_BE_NotInGame.String()
+		p.SendMsg(resp)
+		return
+	}
 
-func (p *user) inGame() bool {
-	return p.gameID != 0
+	g, exist := gameMgr.getGameByID(p.gameID)
+	if !exist {
+		resp.ErrCode = uint32(emsg.BizErr_BE_NotInGame)
+		resp.ErrMsg = emsg.BizErr_BE_NotInGame.String()
+		p.SendMsg(resp)
+		return
+	}
+
+	g.MsgRoute(req, p)
 }

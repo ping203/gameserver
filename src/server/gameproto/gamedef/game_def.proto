@@ -84,6 +84,7 @@ message GameGeneral {
     repeated uint32 skills = 11;
     uint64 userID = 12;
     uint64 pkID = 13;
+    Individual individual = 14;
 }
 
 enum GameStageTyp {

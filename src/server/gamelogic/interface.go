@@ -19,6 +19,7 @@ type User interface {
 	GetGeneral() *gamedef.General
 	AddExp(uint64, int32)
 	SetGameID(uint32)
+	AddGeneral(*gamedef.GameGeneral)
 }
 
 // Service服务

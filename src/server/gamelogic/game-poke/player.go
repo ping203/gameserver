@@ -101,6 +101,12 @@ func (p *Player) useSkill(skill uint32) error {
 	return err
 }
 
+func (p *Player) catch() error {
+	op := p.getOpponent()
+	err := p.GameGeneral.catch(&op.GameGeneral)
+	return err
+}
+
 // 获取对手
 func (p *Player) getOpponent() *Player {
 	for userID, v := range p.GamePoke.players {

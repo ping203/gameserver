@@ -34,7 +34,7 @@ func newAiUser(id uint64) *aiUser {
 	return ai
 }
 
-func (p *aiUser) newGeneral(generalID uint32) error {
+func (p *aiUser) newGeneral(generalID uint32, level uint32) error {
 	conf, exist := cfgMgr.GetConfig().GetGeneralConfByGeneralID(generalID)
 	if !exist {
 		return fmt.Errorf("general.chooseGeneral GetGeneralConfByGeneralID %v", generalID)
@@ -44,7 +44,7 @@ func (p *aiUser) newGeneral(generalID uint32) error {
 		Individual: util.RandIndividual(),
 		Effort:     &gamedef.Individual{},
 		Skills:     conf.BaseSkills,
-		Level:      5,
+		Level:      level,
 	}
 
 	return nil
@@ -111,4 +111,8 @@ func (p *aiUser) useSkill() {
 	g.MsgRoute(&cmsg.CReqUseSkill{
 		SkillID: skill,
 	}, p)
+}
+
+func (p *aiUser) AddGeneral(gameGeneral *gamedef.GameGeneral) {
+
 }
